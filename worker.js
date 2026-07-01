@@ -264,7 +264,36 @@ async function renderProductDetail(env, id) {
           <form id="orderForm">
             <div class="form-group"><label>Ismingiz</label><input type="text" id="customerName" required /></div>
             <div class="form-group"><label>Telefon raqamingiz</label><input type="tel" id="customerPhone" required placeholder="+998 90 123 45 67" /></div>
-            <div class="form-group"><label>Yetkazib berish manzili</label><input type="text" id="customerAddress" required /></div>
+            <div class="form-group">
+              <label>Viloyat</label>
+              <select id="customerRegion" required onchange="updateDistricts()">
+                <option value="">-- Viloyatni tanlang --</option>
+                <option>Toshkent shahri</option>
+                <option>Toshkent viloyati</option>
+                <option>Samarqand viloyati</option>
+                <option>Buxoro viloyati</option>
+                <option>Namangan viloyati</option>
+                <option>Andijon viloyati</option>
+                <option>Farg'ona viloyati</option>
+                <option>Qashqadaryo viloyati</option>
+                <option>Surxondaryo viloyati</option>
+                <option>Sirdaryo viloyati</option>
+                <option>Jizzax viloyati</option>
+                <option>Navoiy viloyati</option>
+                <option>Xorazm viloyati</option>
+                <option>Qoraqalpog'iston</option>
+              </select>
+            </div>
+            <div class="form-group" id="districtGroup" style="display:none;">
+              <label>Tuman/shahar</label>
+              <select id="customerDistrict" required>
+                <option value="">-- Tumanni tanlang --</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Ko'cha, uy raqami</label>
+              <input type="text" id="customerAddress" required placeholder="Ko'cha nomi, uy raqami" />
+            </div>
             <div class="form-group"><label>Izoh (ixtiyoriy)</label><textarea id="orderNote" rows="2"></textarea></div>
             <div class="payment-box">
               <div class="payment-box-label">To'lov uchun karta</div>
@@ -279,14 +308,43 @@ async function renderProductDetail(env, id) {
           <div class="success-box">
             <div class="success-icon">&#10003;</div>
             <h3 style="font-family: var(--font-display); color: var(--emerald-deep);">Buyurtma qabul qilindi!</h3>
-            <p style="color:var(--ink-soft);">Tez orada siz bilan bog'lanamiz. To'lovni amalga oshirib, tasdiqlash uchun karta egasiga xabar yuborishingizni unutmang.</p>
-            <button type="button" class="btn-submit" style="margin-top:16px;" onclick="window.location.href='/'">Yopish</button>
+            <p style="color:var(--ink-soft); margin-bottom:16px;">Buyurtmangiz qabul qilindi! Endi to'lov chekining screenshotini Telegram orqali yuboring — biz tekshirib, mahsulotni jo'natamiz.</p>
+            <a href="https://t.me/shokhjahon_primus" target="_blank" class="btn-submit" style="display:block; text-align:center; margin-bottom:10px; text-decoration:none;">📸 To'lov screenshotini yuborish</a>
+            <button type="button" class="btn-cancel" onclick="window.location.href='/'">Bosh sahifaga qaytish</button>
           </div>
         </div>
       </div>
     </div>
 
     <script>
+      const DISTRICTS = {
+        "Toshkent shahri": ["Bektemir","Chilonzor","Hamza","Mirobod","Mirzo Ulug'bek","Sergeli","Shayxontohur","Olmazar","Uchtepa","Yakkasaroy","Yunusobod","Yangihayot"],
+        "Toshkent viloyati": ["Angren","Bekobod","Bo'stonliq","Bo'ka","Chinoz","Qibray","Oqqo'rg'on","Ohangaron","Parkent","Piskent","Quyi Chirchiq","O'rta Chirchiq","Yuqori Chirchiq","Zangiota","Yangiyo'l"],
+        "Samarqand viloyati": ["Samarqand shahri","Bulung'ur","Ishtixon","Jomboy","Kattaqo'rg'on","Narpay","Nurobod","Oqdaryo","Pastdarg'om","Payariq","Po'latov","Toyloq","Urgut"],
+        "Buxoro viloyati": ["Buxoro shahri","Buxoro tumani","G'ijduvon","Jondor","Kogon","Olot","Peshku","Qorako'l","Qorovulbozor","Romitan","Shofirkon","Vobkent"],
+        "Namangan viloyati": ["Namangan shahri","Chortoq","Chust","Kosonsoy","Mingbuloq","Namangan tumani","Norin","Pop","To'raqo'rg'on","Uychi","Yangiqo'rg'on"],
+        "Andijon viloyati": ["Andijon shahri","Asaka","Baliqchi","Bo'z","Buloqboshi","Izboskan","Jalolquduq","Ko'hna Qo'rg'on","Marhamat","Oltinko'l","Paxtaobod","Qo'rg'ontepa","Shahrixon","Ulug'nor","Xo'jaobod"],
+        "Farg'ona viloyati": ["Farg'ona shahri","Qo'qon","Marg'ilon","Beshariq","Bog'dod","Buvayda","Dang'ara","Furqat","Oltiariq","O'zbekiston","Qo'shtepa","Rishton","So'x","Toshloq","Uchko'prik","Yozyovon"],
+        "Qashqadaryo viloyati": ["Qarshi shahri","Chiroqchi","Dehqonobod","G'uzor","Kasbi","Kitob","Koson","Mirishkor","Muborak","Nishon","Qarshi tumani","Shahrisabz","Yakkabog'"],
+        "Surxondaryo viloyati": ["Termiz shahri","Angor","Bandixon","Bo'ysun","Denov","Jarqo'rg'on","Qiziriq","Qumqo'rg'on","Muzrabot","Oltinsoy","Sariosiyo","Sherobod","Sho'rchi","Termiz tumani","Uzun"],
+        "Sirdaryo viloyati": ["Guliston shahri","Boyovut","Mirzaobod","Oqoltin","Sardoba","Sayxunobod","Sirdaryo tumani","Xavos"],
+        "Jizzax viloyati": ["Jizzax shahri","Arnasoy","Baxmal","Do'stlik","Forish","G'allaorol","Mirzacho'l","Paxtakor","Sharof Rashidov","Yangiobod","Zarbdor","Zafarobod","Zomin"],
+        "Navoiy viloyati": ["Navoiy shahri","Karmana","Konimex","Navbahor","Nurota","Qiziltepa","Tomdi","Uchquduq","Xatirchi"],
+        "Xorazm viloyati": ["Urganch shahri","Bog'ot","Gurlan","Hazorasp","Xiva","Xonqa","Qo'shko'pir","Shovot","Tuproqqal'a","Yangiariq","Yangibozor"],
+        "Qoraqalpog'iston": ["Nukus shahri","Amudaryo","Beruniy","Chimboy","Ellikqal'a","Kegeyli","Mo'ynoq","Nukus tumani","Qanliko'l","Qo'ng'irot","Qorao'zak","Shumanay","Taxtako'pir","To'rtko'l","Xo'jayli"]
+      };
+
+      function updateDistricts() {
+        const region = document.getElementById('customerRegion').value;
+        const districtGroup = document.getElementById('districtGroup');
+        const districtSelect = document.getElementById('customerDistrict');
+        if (!region) { districtGroup.style.display = 'none'; return; }
+        const districts = DISTRICTS[region] || [];
+        districtSelect.innerHTML = '<option value="">-- Tumanni tanlang --</option>' +
+          districts.map(d => '<option>' + d + '</option>').join('');
+        districtGroup.style.display = 'block';
+      }
+
       let selectedColor = ${colors.length ? `"${esc(colors[0])}"` : "null"};
       let selectedSize = ${sizes.length ? `"${esc(sizes[0])}"` : "null"};
 
@@ -318,7 +376,9 @@ async function renderProductDetail(env, id) {
           size: selectedSize,
           customerName: document.getElementById('customerName').value.trim(),
           customerPhone: document.getElementById('customerPhone').value.trim(),
-          customerAddress: document.getElementById('customerAddress').value.trim(),
+          region: document.getElementById('customerRegion').value,
+          district: document.getElementById('customerDistrict').value,
+          customerAddress: document.getElementById('customerRegion').value + ', ' + document.getElementById('customerDistrict').value + ', ' + document.getElementById('customerAddress').value.trim(),
           note: document.getElementById('orderNote').value.trim(),
         };
         const res = await fetch('/api/orders', {
