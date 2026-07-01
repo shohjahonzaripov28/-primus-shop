@@ -295,6 +295,13 @@ async function renderProductDetail(env, id) {
               <input type="text" id="customerAddress" required placeholder="Ko'cha nomi, uy raqami" />
             </div>
             <div class="form-group"><label>Izoh (ixtiyoriy)</label><textarea id="orderNote" rows="2"></textarea></div>
+            <div id="deliveryBox" style="display:none; background:#f0faf5; border:1.5px solid #1a5440; border-radius:10px; padding:12px; margin-bottom:14px;">
+              <div style="font-size:0.82rem; font-weight:600; color:#1a5440; margin-bottom:4px;">Yetkazib berish narxi</div>
+              <div id="deliveryPrice" style="font-size:1.1rem; font-weight:700; color:#1a5440;"></div>
+            </div>
+            <div style="background:#fff3cd; border:1.5px solid #d4a72c; border-radius:10px; padding:12px; margin-bottom:14px; font-size:0.85rem; color:#856404;">
+              ⚠️ <strong>Diqqat!</strong> Buyurtma to'lov screenshoti yuborilganidan so'ng tasdiqlangach jo'natiladi. To'lov tasdiqlanmasa, buyurtma bekor qilinadi.
+            </div>
             <div class="payment-box">
               <div class="payment-box-label">To'lov uchun karta</div>
               <div class="payment-card-number">${esc(config.cardNumber)}</div>
@@ -334,15 +341,37 @@ async function renderProductDetail(env, id) {
         "Qoraqalpog'iston": ["Nukus shahri","Amudaryo","Beruniy","Chimboy","Ellikqal'a","Kegeyli","Mo'ynoq","Nukus tumani","Qanliko'l","Qo'ng'irot","Qorao'zak","Shumanay","Taxtako'pir","To'rtko'l","Xo'jayli"]
       };
 
+      const DELIVERY_PRICES = {
+        "Toshkent shahri": 15000,
+        "Toshkent viloyati": 20000,
+        "Andijon viloyati": 25000,
+        "Farg'ona viloyati": 25000,
+        "Namangan viloyati": 25000,
+        "Samarqand viloyati": 25000,
+        "Jizzax viloyati": 25000,
+        "Sirdaryo viloyati": 25000,
+        "Buxoro viloyati": 30000,
+        "Navoiy viloyati": 30000,
+        "Qashqadaryo viloyati": 30000,
+        "Surxondaryo viloyati": 30000,
+        "Xorazm viloyati": 35000,
+        "Qoraqalpog'iston": 35000,
+      };
+
       function updateDistricts() {
         const region = document.getElementById('customerRegion').value;
         const districtGroup = document.getElementById('districtGroup');
         const districtSelect = document.getElementById('customerDistrict');
-        if (!region) { districtGroup.style.display = 'none'; return; }
+        const deliveryBox = document.getElementById('deliveryBox');
+        const deliveryPrice = document.getElementById('deliveryPrice');
+        if (!region) { districtGroup.style.display = 'none'; deliveryBox.style.display = 'none'; return; }
         const districts = DISTRICTS[region] || [];
         districtSelect.innerHTML = '<option value="">-- Tumanni tanlang --</option>' +
           districts.map(d => '<option>' + d + '</option>').join('');
         districtGroup.style.display = 'block';
+        const price = DELIVERY_PRICES[region] || 30000;
+        deliveryPrice.textContent = price.toLocaleString('ru-RU') + " so'm";
+        deliveryBox.style.display = 'block';
       }
 
       let selectedColor = ${colors.length ? `"${esc(colors[0])}"` : "null"};
