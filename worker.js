@@ -295,12 +295,22 @@ async function renderProductDetail(env, id) {
               <input type="text" id="customerAddress" required placeholder="Ko'cha nomi, uy raqami" />
             </div>
             <div class="form-group"><label>Izoh (ixtiyoriy)</label><textarea id="orderNote" rows="2"></textarea></div>
-            <div id="deliveryBox" style="display:none; background:#f0faf5; border:1.5px solid #1a5440; border-radius:10px; padding:12px; margin-bottom:14px;">
-              <div style="font-size:0.82rem; font-weight:600; color:#1a5440; margin-bottom:4px;">Yetkazib berish narxi</div>
-              <div id="deliveryPrice" style="font-size:1.1rem; font-weight:700; color:#1a5440;"></div>
+            <div id="deliveryBox" style="display:none; background:#f0faf5; border:1.5px solid #1a5440; border-radius:10px; padding:14px; margin-bottom:14px;">
+              <div style="display:flex; justify-content:space-between; margin-bottom:6px;">
+                <span style="font-size:0.85rem; color:#5a6b61;">Mahsulot narxi:</span>
+                <span style="font-size:0.85rem; font-weight:600;" id="productPriceShow"></span>
+              </div>
+              <div style="display:flex; justify-content:space-between; margin-bottom:8px;">
+                <span style="font-size:0.85rem; color:#5a6b61;">Yetkazib berish:</span>
+                <span style="font-size:0.85rem; font-weight:600;" id="deliveryPrice"></span>
+              </div>
+              <div style="border-top:1.5px solid #1a5440; padding-top:8px; display:flex; justify-content:space-between;">
+                <span style="font-size:1rem; font-weight:700; color:#1a5440;">Jami to'lov:</span>
+                <span style="font-size:1.1rem; font-weight:700; color:#1a5440;" id="totalPrice"></span>
+              </div>
             </div>
             <div style="background:#fff3cd; border:1.5px solid #d4a72c; border-radius:10px; padding:12px; margin-bottom:14px; font-size:0.85rem; color:#856404;">
-              ⚠️ <strong>Diqqat!</strong> Buyurtma to'lov screenshoti yuborilganidan so'ng tasdiqlangach jo'natiladi. To'lov tasdiqlanmasa, buyurtma bekor qilinadi.
+              ⚠️ <strong>Diqqat!</strong> Yuqoridagi <strong>jami summani</strong> to'lang! Noto'g'ri summa yuborilsa yoki soxta screenshot tashlansa, buyurtma avtomatik bekor qilinadi.
             </div>
             <div class="payment-box">
               <div class="payment-box-label">To'lov uchun karta</div>
@@ -341,6 +351,8 @@ async function renderProductDetail(env, id) {
         "Qoraqalpog'iston": ["Nukus shahri","Amudaryo","Beruniy","Chimboy","Ellikqal'a","Kegeyli","Mo'ynoq","Nukus tumani","Qanliko'l","Qo'ng'irot","Qorao'zak","Shumanay","Taxtako'pir","To'rtko'l","Xo'jayli"]
       };
 
+      const PRODUCT_PRICE = ${Number(p.price) || 0};
+
       const DELIVERY_PRICES = {
         "Toshkent shahri": 15000,
         "Toshkent viloyati": 20000,
@@ -370,7 +382,11 @@ async function renderProductDetail(env, id) {
           districts.map(d => '<option>' + d + '</option>').join('');
         districtGroup.style.display = 'block';
         const price = DELIVERY_PRICES[region] || 30000;
+        const productPrice = PRODUCT_PRICE;
+        const total = productPrice + price;
+        document.getElementById('productPriceShow').textContent = productPrice.toLocaleString('ru-RU') + " so'm";
         deliveryPrice.textContent = price.toLocaleString('ru-RU') + " so'm";
+        document.getElementById('totalPrice').textContent = total.toLocaleString('ru-RU') + " so'm";
         deliveryBox.style.display = 'block';
       }
 
