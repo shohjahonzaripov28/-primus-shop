@@ -4,4 +4,5 @@ compatibility_date = "2024-01-01"
 
 [[kv_namespaces]]
 binding = "STORE_KV"
-id = "PLACEHOLDER"
+id = "3f35b143ec9f4d14adb8c74982a56212"
+
