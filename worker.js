@@ -1,15 +1,51 @@
 // ============================================
-// ELITE COUTURE - TO'LIQ WORKER KODI
-// Bu yagona fayl: server + baza (KV) + barcha sahifalar
+// PRIMUS SHOP - TO'LIQ YANGILANGAN KOD
+// v2.0 - Savat, Kategoriyalar, Qidiruv, Chat
 // ============================================
 
-const ADMIN_PASSWORD = "dokon2026"; // shu yerda parolni o'zgartirishingiz mumkin
-const ADMIN_PATH = "/boss-panel-7k2x"; // yashirin admin manzili - buni o'zgartiring!
+const ADMIN_PASSWORD = "dokon2026";
+const ADMIN_PATH = "/boss-panel-7k2x";
+
+const CATEGORIES = ["Barchasi", "Erkaklar", "Ayollar", "Aksessuarlar", "Uy buyumlari"];
+
+const DELIVERY_PRICES = {
+  "Toshkent shahri": 15000,
+  "Toshkent viloyati": 20000,
+  "Andijon viloyati": 25000,
+  "Farg'ona viloyati": 25000,
+  "Namangan viloyati": 25000,
+  "Samarqand viloyati": 25000,
+  "Jizzax viloyati": 25000,
+  "Sirdaryo viloyati": 25000,
+  "Buxoro viloyati": 30000,
+  "Navoiy viloyati": 30000,
+  "Qashqadaryo viloyati": 30000,
+  "Surxondaryo viloyati": 30000,
+  "Xorazm viloyati": 35000,
+  "Qoraqalpog'iston": 35000,
+};
+
+const DISTRICTS = {
+  "Toshkent shahri": ["Bektemir","Chilonzor","Hamza","Mirobod","Mirzo Ulug'bek","Sergeli","Shayxontohur","Olmazar","Uchtepa","Yakkasaroy","Yunusobod","Yangihayot"],
+  "Toshkent viloyati": ["Angren","Bekobod","Bo'stonliq","Bo'ka","Chinoz","Qibray","Oqqo'rg'on","Ohangaron","Parkent","Piskent","Quyi Chirchiq","O'rta Chirchiq","Yuqori Chirchiq","Zangiota","Yangiyo'l"],
+  "Samarqand viloyati": ["Samarqand shahri","Bulung'ur","Ishtixon","Jomboy","Kattaqo'rg'on","Narpay","Nurobod","Oqdaryo","Pastdarg'om","Payariq","Po'latov","Toyloq","Urgut"],
+  "Buxoro viloyati": ["Buxoro shahri","Buxoro tumani","G'ijduvon","Jondor","Kogon","Olot","Peshku","Qorako'l","Qorovulbozor","Romitan","Shofirkon","Vobkent"],
+  "Namangan viloyati": ["Namangan shahri","Chortoq","Chust","Kosonsoy","Mingbuloq","Namangan tumani","Norin","Pop","To'raqo'rg'on","Uychi","Yangiqo'rg'on"],
+  "Andijon viloyati": ["Andijon shahri","Asaka","Baliqchi","Bo'z","Buloqboshi","Izboskan","Jalolquduq","Ko'hna Qo'rg'on","Marhamat","Oltinko'l","Paxtaobod","Qo'rg'ontepa","Shahrixon","Ulug'nor","Xo'jaobod"],
+  "Farg'ona viloyati": ["Farg'ona shahri","Qo'qon","Marg'ilon","Beshariq","Bog'dod","Buvayda","Dang'ara","Furqat","Oltiariq","O'zbekiston","Qo'shtepa","Rishton","So'x","Toshloq","Uchko'prik","Yozyovon"],
+  "Qashqadaryo viloyati": ["Qarshi shahri","Chiroqchi","Dehqonobod","G'uzor","Kasbi","Kitob","Koson","Mirishkor","Muborak","Nishon","Qarshi tumani","Shahrisabz","Yakkabog'"],
+  "Surxondaryo viloyati": ["Termiz shahri","Angor","Bandixon","Bo'ysun","Denov","Jarqo'rg'on","Qiziriq","Qumqo'rg'on","Muzrabot","Oltinsoy","Sariosiyo","Sherobod","Sho'rchi","Termiz tumani","Uzun"],
+  "Sirdaryo viloyati": ["Guliston shahri","Boyovut","Mirzaobod","Oqoltin","Sardoba","Sayxunobod","Sirdaryo tumani","Xavos"],
+  "Jizzax viloyati": ["Jizzax shahri","Arnasoy","Baxmal","Do'stlik","Forish","G'allaorol","Mirzacho'l","Paxtakor","Sharof Rashidov","Yangiobod","Zarbdor","Zafarobod","Zomin"],
+  "Navoiy viloyati": ["Navoiy shahri","Karmana","Konimex","Navbahor","Nurota","Qiziltepa","Tomdi","Uchquduq","Xatirchi"],
+  "Xorazm viloyati": ["Urganch shahri","Bog'ot","Gurlan","Hazorasp","Xiva","Xonqa","Qo'shko'pir","Shovot","Tuproqqal'a","Yangiariq","Yangibozor"],
+  "Qoraqalpog'iston": ["Nukus shahri","Amudaryo","Beruniy","Chimboy","Ellikqal'a","Kegeyli","Mo'ynoq","Nukus tumani","Qanliko'l","Qo'ng'irot","Qorao'zak","Shumanay","Taxtako'pir","To'rtko'l","Xo'jayli"]
+};
 
 const STYLE = `
 :root {
-  --emerald-deep: #0f3d2e;
-  --emerald-mid: #1a5440;
+  --green: #0f3d2e;
+  --green-mid: #1a5440;
   --gold: #d4a72c;
   --gold-bright: #f0c14b;
   --cream: #faf6ed;
@@ -18,546 +54,867 @@ const STYLE = `
   --line: #e3dcc9;
   --white: #ffffff;
   --danger: #c1432e;
-  --font-display: "Georgia", serif;
-  --font-body: -apple-system, sans-serif;
-  --radius: 14px;
-  --shadow-card: 0 2px 8px rgba(15,61,46,0.08);
-  --shadow-lift: 0 12px 28px rgba(15,61,46,0.16);
+  --radius: 12px;
+  --shadow: 0 2px 8px rgba(15,61,46,0.08);
 }
-* { box-sizing: border-box; }
-body { margin:0; font-family: var(--font-body); background: var(--cream); color: var(--ink); line-height:1.5; }
-img { max-width:100%; display:block; }
-a { color:inherit; text-decoration:none; }
-button { font-family:inherit; cursor:pointer; }
-.site-header { background: var(--emerald-deep); color: var(--cream); padding:18px 20px; position:sticky; top:0; z-index:50; }
-.header-inner { max-width:1080px; margin:0 auto; display:flex; align-items:center; justify-content:space-between; }
-.brand { font-family: var(--font-display); font-size:1.5rem; font-weight:600; }
-.hero { max-width:1080px; margin:0 auto; padding:40px 20px 24px; text-align:center; }
-.hero h1 { font-family: var(--font-display); font-size: clamp(1.6rem,5vw,2.4rem); margin:0 0 10px; color: var(--emerald-deep); }
-.hero p { color: var(--ink-soft); }
-.catalog { max-width:1080px; margin:0 auto; padding:12px 20px 80px; display:grid; grid-template-columns: repeat(auto-fill, minmax(200px,1fr)); gap:18px; }
-.product-card { background: var(--white); border-radius: var(--radius); overflow:hidden; box-shadow: var(--shadow-card); display:flex; flex-direction:column; position:relative; }
-.product-image-wrap { aspect-ratio:1/1; overflow:hidden; background: var(--line); position:relative; }
-.product-image-wrap img { width:100%; height:100%; object-fit:cover; }
-.badge { position:absolute; top:10px; left:10px; padding:5px 12px; border-radius:999px; font-size:0.72rem; font-weight:700; text-transform:uppercase; }
-.badge.soldout { background: var(--danger); color:#fff; }
-.badge.soon { background: var(--gold); color: var(--emerald-deep); }
-.product-body { padding:14px; display:flex; flex-direction:column; gap:5px; flex:1; }
-.product-name { font-family: var(--font-display); font-size:1rem; font-weight:600; }
-.product-price { font-family: var(--font-display); font-size:1.2rem; font-weight:600; color: var(--emerald-mid); margin-top:2px; }
-.product-price::after { content:" so'm"; font-size:0.72rem; font-weight:400; color: var(--ink-soft); }
-.btn-view { margin-top:8px; background: var(--gold); color: var(--emerald-deep); border:none; padding:10px 14px; border-radius:999px; font-weight:600; font-size:0.88rem; text-align:center; display:block; }
-.btn-view.disabled { background: var(--line); color: var(--ink-soft); pointer-events:none; }
-.site-footer { text-align:center; padding:24px 20px 40px; color: var(--ink-soft); font-size:0.82rem; }
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: -apple-system, sans-serif; background: var(--cream); color: var(--ink); }
+img { max-width: 100%; display: block; }
+a { color: inherit; text-decoration: none; }
+button { font-family: inherit; cursor: pointer; border: none; }
 
-.detail-wrap { max-width:600px; margin:0 auto; padding:20px; }
-.detail-image { aspect-ratio:1/1; border-radius:var(--radius); overflow:hidden; background:var(--line); margin-bottom:16px; }
-.detail-image img { width:100%; height:100%; object-fit:cover; }
-.detail-name { font-family: var(--font-display); font-size:1.4rem; font-weight:600; color:var(--emerald-deep); margin:0 0 6px; }
-.detail-price { font-family: var(--font-display); font-size:1.5rem; font-weight:600; color: var(--emerald-mid); margin-bottom:14px; }
-.detail-price::after { content:" so'm"; font-size:0.8rem; font-weight:400; color:var(--ink-soft); }
-.detail-desc { color: var(--ink-soft); margin-bottom:18px; }
-.option-group { margin-bottom:16px; }
-.option-label { font-weight:600; font-size:0.85rem; margin-bottom:8px; display:block; }
-.option-pills { display:flex; flex-wrap:wrap; gap:8px; }
-.option-pill { border:1.5px solid var(--line); border-radius:999px; padding:8px 16px; font-size:0.85rem; background:var(--white); }
-.option-pill.selected { border-color: var(--emerald-deep); background: var(--emerald-deep); color: var(--cream); }
-.back-link { display:inline-block; margin-bottom:14px; color: var(--ink-soft); font-size:0.88rem; }
+/* HEADER */
+.header { background: var(--green); color: var(--cream); padding: 12px 16px; position: sticky; top: 0; z-index: 100; }
+.header-inner { max-width: 1080px; margin: 0 auto; display: flex; align-items: center; gap: 10px; }
+.logo { font-family: Georgia, serif; font-size: 1.3rem; font-weight: 700; letter-spacing: 0.05em; flex-shrink: 0; }
+.logo span { color: var(--gold-bright); }
+.search-wrap { flex: 1; position: relative; }
+.search-input { width: 100%; padding: 8px 14px; border-radius: 999px; border: none; font-size: 0.9rem; background: rgba(255,255,255,0.15); color: var(--cream); }
+.search-input::placeholder { color: rgba(255,255,255,0.5); }
+.cart-btn { background: var(--gold); color: var(--green); border-radius: 999px; padding: 8px 14px; font-weight: 700; font-size: 0.85rem; flex-shrink: 0; position: relative; }
+.cart-count { position: absolute; top: -5px; right: -5px; background: var(--danger); color: #fff; border-radius: 50%; width: 18px; height: 18px; font-size: 0.7rem; display: flex; align-items: center; justify-content: center; font-weight: 700; }
 
-.modal-overlay { position:fixed; inset:0; background:rgba(15,38,30,0.55); display:none; align-items:flex-end; justify-content:center; z-index:100; }
-.modal-overlay.open { display:flex; }
-.modal { background:var(--white); border-radius:20px 20px 0 0; width:100%; max-width:480px; max-height:90vh; overflow-y:auto; padding:24px 22px 28px; }
-@media (min-width:640px){ .modal-overlay{align-items:center;} .modal{border-radius:20px;} }
-.modal-title { font-family: var(--font-display); font-size:1.3rem; color: var(--emerald-deep); margin:0 0 4px; }
-.form-group { margin-bottom:14px; }
-.form-group label { display:block; font-size:0.82rem; font-weight:600; margin-bottom:6px; }
-.form-group input, .form-group textarea, .form-group select { width:100%; padding:12px 14px; border:1.5px solid var(--line); border-radius:10px; font-size:0.95rem; font-family:inherit; background:var(--cream); }
-.payment-box { background: var(--emerald-deep); color: var(--cream); border-radius:12px; padding:16px; margin:16px 0; }
-.payment-box-label { font-size:0.78rem; opacity:0.7; text-transform:uppercase; margin-bottom:6px; }
-.payment-card-number { font-family: var(--font-display); font-size:1.15rem; font-weight:600; color: var(--gold-bright); }
-.btn-submit { width:100%; background: var(--gold); color: var(--emerald-deep); border:none; padding:14px; border-radius:999px; font-weight:700; font-size:1rem; margin-top:6px; }
-.btn-cancel { width:100%; background:transparent; border:none; color: var(--ink-soft); padding:10px; font-size:0.88rem; }
-.success-box { text-align:center; padding:20px 0; }
-.success-icon { width:56px; height:56px; border-radius:50%; background: var(--emerald-mid); color:#fff; display:flex; align-items:center; justify-content:center; font-size:1.8rem; margin:0 auto 16px; }
+/* CATEGORIES */
+.cats { background: var(--white); border-bottom: 1px solid var(--line); overflow-x: auto; white-space: nowrap; padding: 0 16px; }
+.cats::-webkit-scrollbar { display: none; }
+.cat-btn { display: inline-block; padding: 10px 16px; font-size: 0.85rem; font-weight: 600; color: var(--ink-soft); border-bottom: 2px solid transparent; }
+.cat-btn.active { color: var(--green); border-bottom-color: var(--green); }
 
-.admin-login { max-width:340px; margin:80px auto; background:var(--white); border-radius:var(--radius); padding:30px; box-shadow:var(--shadow-card); text-align:center; }
-.admin-wrap { max-width:900px; margin:0 auto; padding:20px; }
-.admin-tabs { display:flex; gap:8px; margin-bottom:18px; flex-wrap:wrap; }
-.admin-tab { padding:9px 16px; border-radius:999px; background:var(--white); border:1.5px solid var(--line); font-weight:600; font-size:0.85rem; color:var(--ink-soft); }
-.admin-tab.active { background: var(--emerald-deep); color: var(--cream); border-color: var(--emerald-deep); }
-.admin-section { background:var(--white); border-radius:var(--radius); padding:20px; margin-bottom:18px; box-shadow:var(--shadow-card); }
-.admin-section h2 { font-family: var(--font-display); font-size:1.1rem; color:var(--emerald-deep); margin-top:0; }
-.admin-product-row { display:flex; gap:12px; padding:12px 0; border-bottom:1px solid var(--line); align-items:center; flex-wrap:wrap; }
-.admin-product-row img { width:52px; height:52px; border-radius:8px; object-fit:cover; }
-.admin-product-info { flex:1; min-width:120px; }
-.admin-product-info strong { display:block; font-size:0.9rem; }
-.admin-product-info span { font-size:0.8rem; color:var(--ink-soft); }
-.icon-btn { background:var(--cream); border:1px solid var(--line); border-radius:8px; padding:7px 11px; font-size:0.78rem; font-weight:600; }
+/* CATALOG */
+.catalog { max-width: 1080px; margin: 0 auto; padding: 14px 12px 80px; display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
+@media(min-width: 600px){ .catalog { grid-template-columns: repeat(3,1fr); } }
+@media(min-width: 900px){ .catalog { grid-template-columns: repeat(4,1fr); } }
+
+.product-card { background: var(--white); border-radius: var(--radius); overflow: hidden; box-shadow: var(--shadow); display: flex; flex-direction: column; }
+.product-img { aspect-ratio: 1/1; overflow: hidden; background: var(--line); position: relative; }
+.product-img img { width: 100%; height: 100%; object-fit: cover; transition: opacity 0.2s; }
+.badge { position: absolute; top: 7px; left: 7px; padding: 3px 8px; border-radius: 999px; font-size: 0.68rem; font-weight: 700; }
+.badge.soldout { background: var(--danger); color: #fff; }
+.badge.soon { background: var(--gold); color: var(--green); }
+.product-body { padding: 10px; flex: 1; display: flex; flex-direction: column; gap: 4px; }
+.product-name { font-size: 0.85rem; font-weight: 600; line-height: 1.3; }
+.product-price { font-size: 1rem; font-weight: 700; color: var(--green-mid); }
+.product-price::after { content: " so'm"; font-size: 0.7rem; font-weight: 400; color: var(--ink-soft); }
+.color-dots { display: flex; gap: 4px; flex-wrap: wrap; margin-top: 2px; }
+.color-dot { width: 16px; height: 16px; border-radius: 50%; border: 2px solid var(--line); cursor: pointer; flex-shrink: 0; }
+.color-dot.selected { border-color: var(--green); }
+.product-actions { display: flex; gap: 6px; margin-top: 8px; }
+.btn-view { flex: 1; background: var(--green); color: var(--cream); padding: 8px; border-radius: 999px; font-size: 0.8rem; font-weight: 600; text-align: center; }
+.btn-cart { background: var(--gold); color: var(--green); padding: 8px 10px; border-radius: 999px; font-size: 0.8rem; font-weight: 700; }
+.btn-cart.disabled { background: var(--line); color: var(--ink-soft); }
+
+.empty-state { grid-column: 1/-1; text-align: center; padding: 60px 20px; color: var(--ink-soft); }
+
+/* DETAIL */
+.detail-wrap { max-width: 600px; margin: 0 auto; padding: 16px; }
+.back-link { color: var(--ink-soft); font-size: 0.85rem; margin-bottom: 12px; display: inline-block; }
+.detail-images { margin-bottom: 12px; }
+.detail-main-img { aspect-ratio: 1/1; border-radius: var(--radius); overflow: hidden; background: var(--line); margin-bottom: 8px; }
+.detail-main-img img { width: 100%; height: 100%; object-fit: cover; }
+.detail-thumbs { display: flex; gap: 6px; overflow-x: auto; }
+.detail-thumb { width: 60px; height: 60px; border-radius: 8px; overflow: hidden; flex-shrink: 0; border: 2px solid var(--line); cursor: pointer; }
+.detail-thumb.active { border-color: var(--green); }
+.detail-thumb img { width: 100%; height: 100%; object-fit: cover; }
+.detail-name { font-family: Georgia, serif; font-size: 1.3rem; font-weight: 600; margin-bottom: 6px; }
+.detail-price { font-size: 1.4rem; font-weight: 700; color: var(--green-mid); margin-bottom: 14px; }
+.detail-price::after { content: " so'm"; font-size: 0.8rem; font-weight: 400; color: var(--ink-soft); }
+.option-label { font-size: 0.82rem; font-weight: 700; margin-bottom: 6px; color: var(--ink); }
+.option-pills { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 14px; }
+.option-pill { padding: 7px 14px; border-radius: 999px; border: 1.5px solid var(--line); font-size: 0.82rem; background: var(--white); }
+.option-pill.selected { border-color: var(--green); background: var(--green); color: var(--cream); }
+.qty-wrap { display: flex; align-items: center; gap: 10px; margin-bottom: 16px; }
+.qty-btn { width: 32px; height: 32px; border-radius: 50%; background: var(--line); font-size: 1.1rem; font-weight: 700; display: flex; align-items: center; justify-content: center; }
+.qty-num { font-size: 1rem; font-weight: 700; min-width: 24px; text-align: center; }
+.btn-add-cart { width: 100%; background: var(--gold); color: var(--green); padding: 14px; border-radius: 999px; font-weight: 700; font-size: 1rem; margin-bottom: 8px; }
+.btn-buy-now { width: 100%; background: var(--green); color: var(--cream); padding: 14px; border-radius: 999px; font-weight: 700; font-size: 1rem; }
+
+/* MODAL */
+.modal-overlay { position: fixed; inset: 0; background: rgba(15,38,30,0.55); display: none; align-items: flex-end; justify-content: center; z-index: 200; }
+.modal-overlay.open { display: flex; }
+.modal { background: var(--white); border-radius: 20px 20px 0 0; width: 100%; max-width: 500px; max-height: 92vh; overflow-y: auto; padding: 20px; }
+@media(min-width:600px){ .modal-overlay{align-items:center;} .modal{border-radius:20px;} }
+.modal-title { font-family: Georgia, serif; font-size: 1.2rem; color: var(--green); margin-bottom: 14px; }
+
+/* CART */
+.cart-item { display: flex; gap: 10px; padding: 10px 0; border-bottom: 1px solid var(--line); align-items: center; }
+.cart-item img { width: 52px; height: 52px; object-fit: cover; border-radius: 8px; flex-shrink: 0; }
+.cart-item-info { flex: 1; min-width: 0; }
+.cart-item-name { font-size: 0.88rem; font-weight: 600; }
+.cart-item-meta { font-size: 0.78rem; color: var(--ink-soft); }
+.cart-item-price { font-size: 0.9rem; font-weight: 700; color: var(--green-mid); }
+.cart-remove { color: var(--danger); font-size: 1.1rem; padding: 4px 8px; background: none; }
+.cart-total { padding: 12px 0; border-top: 2px solid var(--green); margin-top: 8px; }
+.cart-total-row { display: flex; justify-content: space-between; margin-bottom: 4px; font-size: 0.88rem; }
+.cart-total-main { display: flex; justify-content: space-between; font-size: 1.1rem; font-weight: 700; color: var(--green); margin-top: 8px; }
+
+/* FORM */
+.form-group { margin-bottom: 12px; }
+.form-group label { display: block; font-size: 0.82rem; font-weight: 600; margin-bottom: 5px; }
+.form-group input, .form-group textarea, .form-group select { width: 100%; padding: 11px 13px; border: 1.5px solid var(--line); border-radius: 10px; font-size: 0.92rem; font-family: inherit; background: var(--cream); }
+.payment-box { background: var(--green); color: var(--cream); border-radius: 10px; padding: 14px; margin: 12px 0; }
+.payment-label { font-size: 0.75rem; opacity: 0.7; text-transform: uppercase; margin-bottom: 4px; }
+.payment-card { font-family: Georgia, serif; font-size: 1.1rem; font-weight: 600; color: var(--gold-bright); }
+.delivery-box { background: #f0faf5; border: 1.5px solid var(--green-mid); border-radius: 10px; padding: 12px; margin-bottom: 12px; display: none; }
+.delivery-row { display: flex; justify-content: space-between; font-size: 0.85rem; margin-bottom: 4px; }
+.delivery-total { display: flex; justify-content: space-between; font-size: 1rem; font-weight: 700; color: var(--green); padding-top: 8px; border-top: 1px solid var(--green-mid); margin-top: 4px; }
+.warning-box { background: #fff3cd; border: 1.5px solid var(--gold); border-radius: 10px; padding: 11px; margin-bottom: 12px; font-size: 0.82rem; color: #856404; }
+.btn-submit { width: 100%; background: var(--gold); color: var(--green); padding: 13px; border-radius: 999px; font-weight: 700; font-size: 0.95rem; margin-top: 6px; }
+.btn-cancel { width: 100%; background: transparent; color: var(--ink-soft); padding: 9px; font-size: 0.85rem; margin-top: 4px; }
+.btn-tg { width: 100%; background: #229ED9; color: #fff; padding: 13px; border-radius: 999px; font-weight: 700; font-size: 0.95rem; display: block; text-align: center; margin-top: 10px; }
+.success-box { text-align: center; padding: 20px 0; }
+.success-icon { width: 56px; height: 56px; border-radius: 50%; background: var(--green-mid); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 1.8rem; margin: 0 auto 14px; }
+
+/* ADMIN */
+.admin-login { max-width: 340px; margin: 80px auto; background: var(--white); border-radius: var(--radius); padding: 28px; box-shadow: var(--shadow); text-align: center; }
+.admin-wrap { max-width: 960px; margin: 0 auto; padding: 16px; }
+.admin-tabs { display: flex; gap: 6px; margin-bottom: 16px; flex-wrap: wrap; }
+.admin-tab { padding: 8px 14px; border-radius: 999px; background: var(--white); border: 1.5px solid var(--line); font-weight: 600; font-size: 0.82rem; color: var(--ink-soft); }
+.admin-tab.active { background: var(--green); color: var(--cream); border-color: var(--green); }
+.admin-section { background: var(--white); border-radius: var(--radius); padding: 18px; margin-bottom: 14px; box-shadow: var(--shadow); }
+.admin-section h2 { font-family: Georgia, serif; font-size: 1.1rem; color: var(--green); margin-bottom: 14px; }
+.admin-prod-row { display: flex; gap: 10px; padding: 10px 0; border-bottom: 1px solid var(--line); align-items: center; flex-wrap: wrap; }
+.admin-prod-row img { width: 48px; height: 48px; border-radius: 7px; object-fit: cover; }
+.admin-prod-info { flex: 1; min-width: 100px; }
+.admin-prod-info strong { display: block; font-size: 0.88rem; }
+.admin-prod-info span { font-size: 0.78rem; color: var(--ink-soft); }
+.icon-btn { background: var(--cream); border: 1px solid var(--line); border-radius: 7px; padding: 6px 10px; font-size: 0.78rem; font-weight: 600; }
 .icon-btn.danger { color: var(--danger); }
-.order-card { border:1px solid var(--line); border-radius:12px; padding:14px; margin-bottom:10px; }
-.order-status { font-size:0.72rem; font-weight:700; padding:3px 9px; border-radius:999px; background:var(--gold); color:var(--emerald-deep); text-transform:uppercase; }
-.order-status.bajarildi { background: var(--emerald-mid); color:#fff; }
-.empty-admin, .empty-state { text-align:center; padding:40px 20px; color: var(--ink-soft); grid-column:1/-1; }
-.imagelist-row { display:flex; gap:8px; margin-bottom:8px; }
-.imagelist-row input { flex:1; }
+.icon-btn.success { color: var(--green-mid); }
+.order-card { border: 1px solid var(--line); border-radius: 10px; padding: 12px; margin-bottom: 10px; }
+.order-card.done { border-color: #1a5440; background: #f0faf5; }
+.order-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 6px; flex-wrap: wrap; gap: 4px; }
+.order-status { font-size: 0.72rem; font-weight: 700; padding: 3px 9px; border-radius: 999px; background: var(--gold); color: var(--green); }
+.order-status.done { background: var(--green-mid); color: #fff; }
+.order-detail { font-size: 0.83rem; color: var(--ink-soft); margin: 2px 0; }
+.order-detail strong { color: var(--ink); }
+.order-actions { display: flex; gap: 6px; margin-top: 8px; flex-wrap: wrap; }
+.imagelist-row { display: flex; gap: 6px; margin-bottom: 6px; }
+.imagelist-row input { flex: 1; }
+.orders-header { display: flex; gap: 8px; margin-bottom: 14px; }
+.orders-filter-btn { padding: 7px 14px; border-radius: 999px; border: 1.5px solid var(--line); font-size: 0.82rem; font-weight: 600; background: var(--white); color: var(--ink-soft); }
+.orders-filter-btn.active { background: var(--green); color: var(--cream); border-color: var(--green); }
+.footer { text-align: center; padding: 20px; color: var(--ink-soft); font-size: 0.78rem; }
 `;
-
-// ============================================
-// YORDAMCHI FUNKSIYALAR
-// ============================================
 
 function esc(s) {
   if (!s) return "";
-  return String(s).replace(/[&<>"']/g, (c) => ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;" }[c]));
+  return String(s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 }
 
-function fmtPrice(p) {
-  return Number(p || 0).toLocaleString("ru-RU");
+function fmt(p) {
+  return Number(p||0).toLocaleString("ru-RU");
+}
+
+function html(title, body) {
+  return `<!DOCTYPE html><html lang="uz"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/><title>${esc(title)}</title><style>${STYLE}</style></head><body>${body}</body></html>`;
 }
 
 async function getProducts(env) {
-  const data = await env.STORE_KV.get("products");
-  return data ? JSON.parse(data) : [];
+  const d = await env.STORE_KV.get("products");
+  return d ? JSON.parse(d) : [];
 }
-async function saveProducts(env, products) {
-  await env.STORE_KV.put("products", JSON.stringify(products));
+async function saveProducts(env, arr) {
+  await env.STORE_KV.put("products", JSON.stringify(arr));
 }
 async function getOrders(env) {
-  const data = await env.STORE_KV.get("orders");
-  return data ? JSON.parse(data) : [];
+  const d = await env.STORE_KV.get("orders");
+  return d ? JSON.parse(d) : [];
 }
-async function saveOrders(env, orders) {
-  await env.STORE_KV.put("orders", JSON.stringify(orders));
+async function saveOrders(env, arr) {
+  await env.STORE_KV.put("orders", JSON.stringify(arr));
 }
 async function getConfig(env) {
-  const data = await env.STORE_KV.get("config");
-  const defaults = {
-    storeName: "Primus",
-    cardNumber: "8600 1234 5678 9012",
-    cardOwner: "F. Ism Sharifov",
-    telegramWorkerUrl: "",
-  };
-  return data ? { ...defaults, ...JSON.parse(data) } : defaults;
+  const d = await env.STORE_KV.get("config");
+  const def = { storeName:"Primus", cardNumber:"8600 1234 5678 9012", cardOwner:"F. Ism Sharifov", telegramWorkerUrl:"" };
+  return d ? {...def,...JSON.parse(d)} : def;
 }
-async function saveConfig(env, config) {
-  await env.STORE_KV.put("config", JSON.stringify(config));
+async function saveConfig(env, cfg) {
+  await env.STORE_KV.put("config", JSON.stringify(cfg));
 }
 
-function pageShell(title, bodyHtml, extraHead = "") {
-  return `<!DOCTYPE html>
-<html lang="uz">
-<head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>${esc(title)}</title>
-<style>${STYLE}</style>
-${extraHead}
-</head>
-<body>${bodyHtml}</body>
-</html>`;
+function isAuthed(req) {
+  return (req.headers.get("Cookie")||"").includes("admin_session=valid");
 }
 
-// ============================================
-// SAHIFALAR
-// ============================================
+async function notifyTelegram(env, order) {
+  const cfg = await getConfig(env);
+  if (!cfg.telegramWorkerUrl) return;
+  const items = (order.items||[]).map(i => `- ${i.name} x${i.qty} (${i.color||""} ${i.size||""}) = ${fmt(i.price*i.qty)} so'm`).join("\n");
+  const msg = `🛒 YANGI BUYURTMA!\n\n${items}\n\n💰 Jami: ${fmt(order.total)} so'm\n👤 ${order.customerName}\n📞 ${order.customerPhone}\n📍 ${order.customerAddress}${order.note?"\n📝 "+order.note:""}`;
+  try {
+    await fetch(cfg.telegramWorkerUrl, {
+      method:"POST", headers:{"Content-Type":"application/json"},
+      body: JSON.stringify({message: msg})
+    });
+  } catch(e){}
+}
 
-async function renderHome(env) {
-  const products = await getProducts(env);
-  const config = await getConfig(env);
+// ============ HOME PAGE ============
+async function renderHome(env, searchQ, catFilter) {
+  let products = await getProducts(env);
+  const cfg = await getConfig(env);
+
+  if (searchQ) {
+    const q = searchQ.toLowerCase();
+    products = products.filter(p => p.name.toLowerCase().includes(q) || (p.description||"").toLowerCase().includes(q));
+  }
+  if (catFilter && catFilter !== "Barchasi") {
+    products = products.filter(p => p.category === catFilter);
+  }
+
+  const catHtml = CATEGORIES.map(c =>
+    `<button class="cat-btn${(!catFilter||catFilter==="Barchasi")&&c==="Barchasi"||catFilter===c?" active":""}" onclick="filterCat('${esc(c)}')">${esc(c)}</button>`
+  ).join("");
 
   const cards = products.length === 0
-    ? `<div class="empty-state">Hozircha mahsulot yo'q.</div>`
-    : products.map((p) => {
-        const cover = (p.images && p.images[0]) || "";
+    ? `<div class="empty-state">Hozircha mahsulot yo'q</div>`
+    : products.map(p => {
+        const cover = (p.images&&p.images[0])||"";
+        const colors = (p.colors||[]).filter(Boolean);
+        const isSoldout = p.status === "soldout";
+        const isSoon = p.status === "soon";
         let badge = "";
-        let btnText = "Ko'rish";
-        let btnClass = "btn-view";
-        if (p.status === "soldout") { badge = `<span class="badge soldout">Sotildi</span>`; }
-        if (p.status === "soon") { badge = `<span class="badge soon">Tez kunda</span>`; btnClass += " disabled"; btnText = "Tez kunda"; }
+        if (isSoldout) badge = `<span class="badge soldout">Sotildi</span>`;
+        if (isSoon) badge = `<span class="badge soon">Tez kunda</span>`;
+
+        const colorDots = colors.map((c,i) => {
+          const colorMap = {
+            "Qora":"#222","Oq":"#f5f5f5","Ko'k":"#1a56db","Qizil":"#e02424","Yashil":"#057a55",
+            "Sariq":"#e3a008","Jigarrang":"#92400e","Kulrang":"#9ca3af","Pushti":"#f472b6",
+            "To'q jigarrang":"#44281e","Xaki":"#6b7c3a","Navy":"#1e3a5f"
+          };
+          const bg = colorMap[c] || "#ccc";
+          return `<div class="color-dot${i===0?" selected":""}" style="background:${bg}" title="${esc(c)}" onclick="changeCardColor(this,'${p.id}',${i})"></div>`;
+        }).join("");
+
         return `
-        <div class="product-card">
-          <div class="product-image-wrap">
-            <img src="${esc(cover)}" alt="${esc(p.name)}" loading="lazy" />
+        <div class="product-card" id="card-${p.id}">
+          <div class="product-img">
+            <img id="card-img-${p.id}" src="${esc(cover)}" alt="${esc(p.name)}" loading="lazy"/>
             ${badge}
           </div>
           <div class="product-body">
             <div class="product-name">${esc(p.name)}</div>
-            <div class="product-price">${fmtPrice(p.price)}</div>
-            <a href="/product/${p.id}" class="${btnClass}">${btnText}</a>
+            <div class="product-price">${fmt(p.price)}</div>
+            ${colors.length ? `<div class="color-dots">${colorDots}</div>` : ""}
+            <div class="product-actions">
+              <a href="/product/${p.id}" class="btn-view">Ko'rish</a>
+              ${!isSoldout&&!isSoon
+                ? `<button class="btn-cart" onclick="addToCart('${p.id}')">🛒</button>`
+                : `<button class="btn-cart disabled" disabled>🛒</button>`}
+            </div>
           </div>
         </div>`;
       }).join("");
 
-  return pageShell(config.storeName, `
-    <header class="site-header">
+  return html(cfg.storeName, `
+    <header class="header">
       <div class="header-inner">
-        <div class="brand">${esc(config.storeName)}</div>
+        <div class="logo">P<span>R</span>IMUS</div>
+        <div class="search-wrap">
+          <input class="search-input" type="text" placeholder="Qidiruv..." id="searchInput" value="${esc(searchQ||"")}" onkeydown="if(event.key==='Enter')doSearch()" />
+        </div>
+        <button class="cart-btn" onclick="openCart()">🛒 <span id="cartCountBadge" class="cart-count" style="display:none">0</span></button>
       </div>
     </header>
-    <section class="hero">
-      <h1>Sevimli mahsulotlaringiz bir qadam yaqinroq</h1>
-      <p>Tanlang, buyurtma bering — biz qolganini hal qilamiz.</p>
-    </section>
-    <main class="catalog">${cards}</main>
-    <footer class="site-footer">© 2026 ${esc(config.storeName)}. Barcha huquqlar himoyalangan.</footer>
-  `);
-}
+    <div class="cats">${catHtml}</div>
+    <main class="catalog" id="catalog">${cards}</main>
+    <footer class="footer">© 2026 Primus. Barcha huquqlar himoyalangan.</footer>
 
-async function renderProductDetail(env, id) {
-  const products = await getProducts(env);
-  const config = await getConfig(env);
-  const p = products.find((x) => x.id === id);
-
-  if (!p) {
-    return pageShell("Topilmadi", `<div class="detail-wrap"><a href="/" class="back-link">&larr; Bosh sahifa</a><p>Mahsulot topilmadi.</p></div>`);
-  }
-
-  const images = p.images && p.images.length ? p.images : [""];
-  const colors = (p.colors || []).filter(Boolean);
-  const sizes = (p.sizes || []).filter(Boolean);
-
-  const isAvailable = p.status !== "soldout" && p.status !== "soon";
-  let statusNote = "";
-  if (p.status === "soldout") statusNote = `<p style="color:var(--danger); font-weight:600;">Bu mahsulot hozircha sotildi</p>`;
-  if (p.status === "soon") statusNote = `<p style="color:var(--gold); font-weight:600;">Tez kunda sotuvga chiqadi</p>`;
-
-  return pageShell(p.name + " - " + config.storeName, `
-    <header class="site-header">
-      <div class="header-inner"><div class="brand">${esc(config.storeName)}</div></div>
-    </header>
-    <div class="detail-wrap">
-      <a href="/" class="back-link">&larr; Bosh sahifa</a>
-      <div class="detail-image">
-        <img id="mainImage" src="${esc(images[0])}" alt="${esc(p.name)}" />
+    <!-- CART MODAL -->
+    <div class="modal-overlay" id="cartModal">
+      <div class="modal">
+        <h3 class="modal-title">🛒 Savat</h3>
+        <div id="cartItems"></div>
+        <div id="cartEmpty" style="text-align:center;padding:30px;color:var(--ink-soft);display:none">Savat bo'sh</div>
+        <div id="cartFooter" style="display:none">
+          <div class="cart-total">
+            <div class="cart-total-row"><span>Mahsulotlar:</span><span id="cartSubtotal"></span></div>
+            <div class="cart-total-main"><span>Jami:</span><span id="cartTotal"></span></div>
+          </div>
+          <button class="btn-submit" onclick="openOrderModal()">Buyurtma berish</button>
+        </div>
+        <button class="btn-cancel" onclick="closeModal('cartModal')">Yopish</button>
       </div>
-      ${images.length > 1 ? `<div style="display:flex; gap:8px; margin-bottom:16px; overflow-x:auto;">
-        ${images.map((img, i) => `<img src="${esc(img)}" onclick="document.getElementById('mainImage').src='${esc(img)}'" style="width:56px;height:56px;object-fit:cover;border-radius:8px;cursor:pointer;border:2px solid ${i===0?'var(--emerald-deep)':'var(--line)'};" />`).join("")}
-      </div>` : ""}
-      <h1 class="detail-name">${esc(p.name)}</h1>
-      <div class="detail-price">${fmtPrice(p.price)}</div>
-      ${statusNote}
-      <p class="detail-desc">${esc(p.description || "")}</p>
-
-      ${colors.length ? `<div class="option-group">
-        <label class="option-label">Rang</label>
-        <div class="option-pills" id="colorPills">
-          ${colors.map((c, i) => `<button type="button" class="option-pill${i===0?' selected':''}" onclick="selectOption('color', this)">${esc(c)}</button>`).join("")}
-        </div>
-      </div>` : ""}
-
-      ${sizes.length ? `<div class="option-group">
-        <label class="option-label">O'lcham</label>
-        <div class="option-pills" id="sizePills">
-          ${sizes.map((s, i) => `<button type="button" class="option-pill${i===0?' selected':''}" onclick="selectOption('size', this)">${esc(s)}</button>`).join("")}
-        </div>
-      </div>` : ""}
-
-      ${isAvailable ? `<button class="btn-view" style="width:100%; border:none; font-size:1rem; padding:14px;" onclick="openOrderModal()">Buyurtma berish</button>`
-        : `<button class="btn-view disabled" style="width:100%; border:none; font-size:1rem; padding:14px;">${p.status === "soldout" ? "Sotildi" : "Tez kunda"}</button>`}
     </div>
 
+    <!-- ORDER MODAL -->
     <div class="modal-overlay" id="orderModal">
       <div class="modal">
         <div id="orderFormView">
           <h3 class="modal-title">Buyurtma berish</h3>
-          <p style="color:var(--ink-soft); font-size:0.9rem; margin-bottom:16px;">${esc(p.name)} — ${fmtPrice(p.price)} so'm</p>
           <form id="orderForm">
-            <div class="form-group"><label>Ismingiz</label><input type="text" id="customerName" required /></div>
-            <div class="form-group"><label>Telefon raqamingiz</label><input type="tel" id="customerPhone" required placeholder="+998 90 123 45 67" /></div>
+            <div class="form-group"><label>Ismingiz</label><input type="text" id="customerName" required placeholder="Ism Familiya"/></div>
+            <div class="form-group"><label>Telefon</label><input type="tel" id="customerPhone" required placeholder="+998 90 123 45 67"/></div>
             <div class="form-group">
               <label>Viloyat</label>
               <select id="customerRegion" required onchange="updateDistricts()">
-                <option value="">-- Viloyatni tanlang --</option>
-                <option>Toshkent shahri</option>
-                <option>Toshkent viloyati</option>
-                <option>Samarqand viloyati</option>
-                <option>Buxoro viloyati</option>
-                <option>Namangan viloyati</option>
-                <option>Andijon viloyati</option>
-                <option>Farg'ona viloyati</option>
-                <option>Qashqadaryo viloyati</option>
-                <option>Surxondaryo viloyati</option>
-                <option>Sirdaryo viloyati</option>
-                <option>Jizzax viloyati</option>
-                <option>Navoiy viloyati</option>
-                <option>Xorazm viloyati</option>
-                <option>Qoraqalpog'iston</option>
+                <option value="">-- Viloyat tanlang --</option>
+                ${Object.keys(DELIVERY_PRICES).map(r=>`<option>${esc(r)}</option>`).join("")}
               </select>
             </div>
-            <div class="form-group" id="districtGroup" style="display:none;">
-              <label>Tuman/shahar</label>
-              <select id="customerDistrict" required>
-                <option value="">-- Tumanni tanlang --</option>
-              </select>
+            <div class="form-group" id="districtGroup" style="display:none">
+              <label>Tuman</label>
+              <select id="customerDistrict" required><option value="">-- Tuman tanlang --</option></select>
             </div>
-            <div class="form-group">
-              <label>Ko'cha, uy raqami</label>
-              <input type="text" id="customerAddress" required placeholder="Ko'cha nomi, uy raqami" />
-            </div>
+            <div class="form-group"><label>Ko'cha, uy raqami</label><input type="text" id="customerAddress" required placeholder="Ko'cha, uy raqami"/></div>
             <div class="form-group"><label>Izoh (ixtiyoriy)</label><textarea id="orderNote" rows="2"></textarea></div>
-            <div id="deliveryBox" style="display:none; background:#f0faf5; border:1.5px solid #1a5440; border-radius:10px; padding:14px; margin-bottom:14px;">
-              <div style="display:flex; justify-content:space-between; margin-bottom:6px;">
-                <span style="font-size:0.85rem; color:#5a6b61;">Mahsulot narxi:</span>
-                <span style="font-size:0.85rem; font-weight:600;" id="productPriceShow"></span>
-              </div>
-              <div style="display:flex; justify-content:space-between; margin-bottom:8px;">
-                <span style="font-size:0.85rem; color:#5a6b61;">Yetkazib berish:</span>
-                <span style="font-size:0.85rem; font-weight:600;" id="deliveryPrice"></span>
-              </div>
-              <div style="border-top:1.5px solid #1a5440; padding-top:8px; display:flex; justify-content:space-between;">
-                <span style="font-size:1rem; font-weight:700; color:#1a5440;">Jami to'lov:</span>
-                <span style="font-size:1.1rem; font-weight:700; color:#1a5440;" id="totalPrice"></span>
-              </div>
+            <div class="delivery-box" id="deliveryBox">
+              <div class="delivery-row"><span>Mahsulotlar:</span><span id="dSubtotal"></span></div>
+              <div class="delivery-row"><span>Yetkazib berish:</span><span id="dDelivery"></span></div>
+              <div class="delivery-total"><span>JAMI TO'LOV:</span><span id="dTotal"></span></div>
             </div>
-            <div style="background:#fff3cd; border:1.5px solid #d4a72c; border-radius:10px; padding:12px; margin-bottom:14px; font-size:0.85rem; color:#856404;">
-              ⚠️ <strong>Diqqat!</strong> Yuqoridagi <strong>jami summani</strong> to'lang! Noto'g'ri summa yuborilsa yoki soxta screenshot tashlansa, buyurtma avtomatik bekor qilinadi.
-            </div>
-            <div class="payment-box">
-              <div class="payment-box-label">To'lov uchun karta</div>
-              <div class="payment-card-number">${esc(config.cardNumber)}</div>
-              <div style="font-size:0.85rem; opacity:0.85; margin-top:4px;">${esc(config.cardOwner)}</div>
+            <div class="warning-box">⚠️ <strong>Diqqat!</strong> Yuqoridagi jami summani to'lang! Soxta screenshot yuborilsa buyurtma bekor qilinadi.</div>
+            <div class="payment-box" id="paymentBox" style="display:none">
+              <div class="payment-label">TO'LOV UCHUN KARTA</div>
+              <div class="payment-card" id="payCard"></div>
+              <div style="font-size:0.82rem;opacity:0.85;margin-top:3px;" id="payOwner"></div>
             </div>
             <button type="submit" class="btn-submit">Buyurtmani tasdiqlash</button>
-            <button type="button" class="btn-cancel" onclick="closeOrderModal()">Bekor qilish</button>
+            <button type="button" class="btn-cancel" onclick="closeModal('orderModal')">Bekor qilish</button>
           </form>
         </div>
-        <div id="orderSuccessView" style="display:none;">
+        <div id="orderSuccessView" style="display:none">
           <div class="success-box">
-            <div class="success-icon">&#10003;</div>
-            <h3 style="font-family: var(--font-display); color: var(--emerald-deep);">Buyurtma qabul qilindi!</h3>
-            <p style="color:var(--ink-soft); margin-bottom:16px;">Buyurtmangiz qabul qilindi! Endi to'lov chekining screenshotini Telegram orqali yuboring — biz tekshirib, mahsulotni jo'natamiz.</p>
-            <a href="https://t.me/shokhjahon_primus" target="_blank" class="btn-submit" style="display:block; text-align:center; margin-bottom:10px; text-decoration:none;">📸 To'lov screenshotini yuborish</a>
-            <button type="button" class="btn-cancel" onclick="window.location.href='/'">Bosh sahifaga qaytish</button>
+            <div class="success-icon">✓</div>
+            <h3 style="font-family:Georgia,serif;color:var(--green);margin-bottom:8px;">Buyurtma qabul qilindi!</h3>
+            <p style="color:var(--ink-soft);font-size:0.9rem;margin-bottom:16px;">Endi to'lov chekining screenshotini Telegram orqali yuboring — biz tekshirib, mahsulotni jo'natamiz.</p>
+            <a href="https://t.me/shokhjahon_primus" target="_blank" class="btn-tg">📸 To'lov screenshotini yuborish</a>
+            <button class="btn-cancel" onclick="closeModal('orderModal');window.location.reload()">Yopish</button>
           </div>
         </div>
       </div>
     </div>
 
     <script>
-      const DISTRICTS = {
-        "Toshkent shahri": ["Bektemir","Chilonzor","Hamza","Mirobod","Mirzo Ulug'bek","Sergeli","Shayxontohur","Olmazar","Uchtepa","Yakkasaroy","Yunusobod","Yangihayot"],
-        "Toshkent viloyati": ["Angren","Bekobod","Bo'stonliq","Bo'ka","Chinoz","Qibray","Oqqo'rg'on","Ohangaron","Parkent","Piskent","Quyi Chirchiq","O'rta Chirchiq","Yuqori Chirchiq","Zangiota","Yangiyo'l"],
-        "Samarqand viloyati": ["Samarqand shahri","Bulung'ur","Ishtixon","Jomboy","Kattaqo'rg'on","Narpay","Nurobod","Oqdaryo","Pastdarg'om","Payariq","Po'latov","Toyloq","Urgut"],
-        "Buxoro viloyati": ["Buxoro shahri","Buxoro tumani","G'ijduvon","Jondor","Kogon","Olot","Peshku","Qorako'l","Qorovulbozor","Romitan","Shofirkon","Vobkent"],
-        "Namangan viloyati": ["Namangan shahri","Chortoq","Chust","Kosonsoy","Mingbuloq","Namangan tumani","Norin","Pop","To'raqo'rg'on","Uychi","Yangiqo'rg'on"],
-        "Andijon viloyati": ["Andijon shahri","Asaka","Baliqchi","Bo'z","Buloqboshi","Izboskan","Jalolquduq","Ko'hna Qo'rg'on","Marhamat","Oltinko'l","Paxtaobod","Qo'rg'ontepa","Shahrixon","Ulug'nor","Xo'jaobod"],
-        "Farg'ona viloyati": ["Farg'ona shahri","Qo'qon","Marg'ilon","Beshariq","Bog'dod","Buvayda","Dang'ara","Furqat","Oltiariq","O'zbekiston","Qo'shtepa","Rishton","So'x","Toshloq","Uchko'prik","Yozyovon"],
-        "Qashqadaryo viloyati": ["Qarshi shahri","Chiroqchi","Dehqonobod","G'uzor","Kasbi","Kitob","Koson","Mirishkor","Muborak","Nishon","Qarshi tumani","Shahrisabz","Yakkabog'"],
-        "Surxondaryo viloyati": ["Termiz shahri","Angor","Bandixon","Bo'ysun","Denov","Jarqo'rg'on","Qiziriq","Qumqo'rg'on","Muzrabot","Oltinsoy","Sariosiyo","Sherobod","Sho'rchi","Termiz tumani","Uzun"],
-        "Sirdaryo viloyati": ["Guliston shahri","Boyovut","Mirzaobod","Oqoltin","Sardoba","Sayxunobod","Sirdaryo tumani","Xavos"],
-        "Jizzax viloyati": ["Jizzax shahri","Arnasoy","Baxmal","Do'stlik","Forish","G'allaorol","Mirzacho'l","Paxtakor","Sharof Rashidov","Yangiobod","Zarbdor","Zafarobod","Zomin"],
-        "Navoiy viloyati": ["Navoiy shahri","Karmana","Konimex","Navbahor","Nurota","Qiziltepa","Tomdi","Uchquduq","Xatirchi"],
-        "Xorazm viloyati": ["Urganch shahri","Bog'ot","Gurlan","Hazorasp","Xiva","Xonqa","Qo'shko'pir","Shovot","Tuproqqal'a","Yangiariq","Yangibozor"],
-        "Qoraqalpog'iston": ["Nukus shahri","Amudaryo","Beruniy","Chimboy","Ellikqal'a","Kegeyli","Mo'ynoq","Nukus tumani","Qanliko'l","Qo'ng'irot","Qorao'zak","Shumanay","Taxtako'pir","To'rtko'l","Xo'jayli"]
-      };
+      const PRODUCTS_DATA = ${JSON.stringify(await getProducts(env))};
+      const DISTRICTS_ENCODED = decodeURIComponent('{"Toshkent shahri": ["Bektemir", "Chilonzor", "Hamza", "Mirobod", "Mirzo Ulugbek", "Sergeli", "Shayxontohur", "Olmazar", "Uchtepa", "Yakkasaroy", "Yunusobod", "Yangihayot"], "Toshkent viloyati": ["Angren", "Bekobod", "Bostonliq", "Boka", "Chinoz", "Qibray", "Oqqorgon", "Ohangaron", "Parkent", "Piskent", "Quyi Chirchiq", "Orta Chirchiq", "Yuqori Chirchiq", "Zangiota", "Yangiyo l"], "Samarqand viloyati": ["Samarqand shahri", "Bulungur", "Ishtixon", "Jomboy", "Kattaqorgon", "Narpay", "Nurobod", "Oqdaryo", "Pastdargom", "Payariq", "Polatov", "Toyloq", "Urgut"], "Buxoro viloyati": ["Buxoro shahri", "Buxoro tumani", "Gijduvon", "Jondor", "Kogon", "Olot", "Peshku", "Qarakol", "Qarovulbozor", "Romitan", "Shofirkon", "Vobkent"], "Namangan viloyati": ["Namangan shahri", "Chortoq", "Chust", "Kosonsoy", "Mingbuloq", "Namangan tumani", "Norin", "Pop", "Toraqorgon", "Uychi", "Yangiqorgon"], "Andijon viloyati": ["Andijon shahri", "Asaka", "Baliqchi", "Boz", "Buloqboshi", "Izboskan", "Jalolquduq", "Marhamat", "Oltinkol", "Paxtaobod", "Qorgontepa", "Shahrixon", "Ulagnor", "Xojaobod"], "Fargona viloyati": ["Fargona shahri", "Qoqon", "Margilon", "Beshariq", "Bogdod", "Buvayda", "Dangara", "Furqat", "Oltiariq", "Qoshtepа", "Rishton", "Sox", "Toshloq", "Uchkoprik", "Yozyovon"], "Qashqadaryo viloyati": ["Qarshi shahri", "Chiroqchi", "Dehqonobod", "Guzor", "Kasbi", "Kitob", "Koson", "Mirishkor", "Muborak", "Nishon", "Qarshi tumani", "Shahrisabz", "Yakkabog"], "Surxondaryo viloyati": ["Termiz shahri", "Angor", "Bandixon", "Boysun", "Denov", "Jarqorgon", "Qiziriq", "Qumqorgon", "Muzrabot", "Oltinsoy", "Sariosiyo", "Sherobod", "Shorchi", "Termiz tumani", "Uzun"], "Sirdaryo viloyati": ["Guliston shahri", "Boyovut", "Mirzaobod", "Oqoltin", "Sardoba", "Sayxunobod", "Sirdaryo tumani", "Xavos"], "Jizzax viloyati": ["Jizzax shahri", "Arnasoy", "Baxmal", "Dostlik", "Forish", "Gallaorol", "Mirzachol", "Paxtakor", "Sharof Rashidov", "Yangiobod", "Zarbdor", "Zafarobod", "Zomin"], "Navoiy viloyati": ["Navoiy shahri", "Karmana", "Konimex", "Navbahor", "Nurota", "Qiziltepa", "Tomdi", "Uchquduq", "Xatirchi"], "Xorazm viloyati": ["Urganch shahri", "Bogot", "Gurlan", "Hazorasp", "Xiva", "Xonqa", "Qoshkopir", "Shovot", "Tuproqqala", "Yangiariq", "Yangibozor"], "Qoraqalpogiston": ["Nukus shahri", "Amudaryo", "Beruniy", "Chimboy", "Ellikqala", "Kegeyli", "Moynok", "Nukus tumani", "Qanlikol", "Qongrot", "Qaraozak", "Shumanay", "Taxtakopir", "Tortkol", "Xojayli"]}');
+      const DELIVERY_PRICES = {"Toshkent shahri": 15000, "Toshkent viloyati": 20000, "Andijon viloyati": 25000, "Fargona viloyati": 25000, "Namangan viloyati": 25000, "Samarqand viloyati": 25000, "Jizzax viloyati": 25000, "Sirdaryo viloyati": 25000, "Buxoro viloyati": 30000, "Navoiy viloyati": 30000, "Qashqadaryo viloyati": 30000, "Surxondaryo viloyati": 30000, "Xorazm viloyati": 35000, "Qoraqalpogiston": 35000};
+      const DISTRICTS_DATA = JSON.parse(decodeURIComponent(DISTRICTS_ENCODED));
+      let cart = JSON.parse(localStorage.getItem('primus_cart')||'[]');
 
-      const PRODUCT_PRICE = ${Number(p.price) || 0};
+      function saveCart(){ localStorage.setItem('primus_cart', JSON.stringify(cart)); updateCartBadge(); }
 
-      const DELIVERY_PRICES = {
-        "Toshkent shahri": 15000,
-        "Toshkent viloyati": 20000,
-        "Andijon viloyati": 25000,
-        "Farg'ona viloyati": 25000,
-        "Namangan viloyati": 25000,
-        "Samarqand viloyati": 25000,
-        "Jizzax viloyati": 25000,
-        "Sirdaryo viloyati": 25000,
-        "Buxoro viloyati": 30000,
-        "Navoiy viloyati": 30000,
-        "Qashqadaryo viloyati": 30000,
-        "Surxondaryo viloyati": 30000,
-        "Xorazm viloyati": 35000,
-        "Qoraqalpog'iston": 35000,
-      };
-
-      function updateDistricts() {
-        const region = document.getElementById('customerRegion').value;
-        const districtGroup = document.getElementById('districtGroup');
-        const districtSelect = document.getElementById('customerDistrict');
-        const deliveryBox = document.getElementById('deliveryBox');
-        const deliveryPrice = document.getElementById('deliveryPrice');
-        if (!region) { districtGroup.style.display = 'none'; deliveryBox.style.display = 'none'; return; }
-        const districts = DISTRICTS[region] || [];
-        districtSelect.innerHTML = '<option value="">-- Tumanni tanlang --</option>' +
-          districts.map(d => '<option>' + d + '</option>').join('');
-        districtGroup.style.display = 'block';
-        const price = DELIVERY_PRICES[region] || 30000;
-        const productPrice = PRODUCT_PRICE;
-        const total = productPrice + price;
-        document.getElementById('productPriceShow').textContent = productPrice.toLocaleString('ru-RU') + " so'm";
-        deliveryPrice.textContent = price.toLocaleString('ru-RU') + " so'm";
-        document.getElementById('totalPrice').textContent = total.toLocaleString('ru-RU') + " so'm";
-        deliveryBox.style.display = 'block';
+      function updateCartBadge(){
+        const total = cart.reduce((s,i)=>s+i.qty,0);
+        const badge = document.getElementById('cartCountBadge');
+        if(total>0){ badge.textContent=total; badge.style.display='flex'; }
+        else { badge.style.display='none'; }
       }
 
-      let selectedColor = ${colors.length ? `"${esc(colors[0])}"` : "null"};
-      let selectedSize = ${sizes.length ? `"${esc(sizes[0])}"` : "null"};
-
-      function selectOption(type, el) {
-        const parent = el.parentElement;
-        Array.from(parent.children).forEach(c => c.classList.remove('selected'));
-        el.classList.add('selected');
-        if (type === 'color') selectedColor = el.textContent;
-        if (type === 'size') selectedSize = el.textContent;
+      function addToCart(id){
+        const p = PRODUCTS_DATA.find(x=>x.id===id);
+        if(!p) return;
+        const existing = cart.find(i=>i.id===id&&!i.color&&!i.size);
+        if(existing){ existing.qty++; }
+        else { cart.push({id,name:p.name,price:Number(p.price),image:(p.images&&p.images[0])||"",qty:1}); }
+        saveCart();
+        const btn = document.querySelector(`#card-${id} .btn-cart`);
+        if(btn){ btn.textContent='✓'; setTimeout(()=>btn.textContent='🛒',1000); }
       }
 
-      function openOrderModal() {
+      function removeFromCart(idx){
+        cart.splice(idx,1);
+        saveCart();
+        renderCartItems();
+      }
+
+      function renderCartItems(){
+        const el = document.getElementById('cartItems');
+        const empty = document.getElementById('cartEmpty');
+        const footer = document.getElementById('cartFooter');
+        if(cart.length===0){ el.innerHTML=''; empty.style.display='block'; footer.style.display='none'; return; }
+        empty.style.display='none'; footer.style.display='block';
+        let subtotal=0;
+        el.innerHTML = cart.map((item,i)=>{
+          subtotal+=item.price*item.qty;
+          return \`<div class="cart-item">
+            <img src="\${item.image}" alt=""/>
+            <div class="cart-item-info">
+              <div class="cart-item-name">\${item.name}</div>
+              <div class="cart-item-meta">\${item.color||''} \${item.size||''} x\${item.qty}</div>
+              <div class="cart-item-price">\${(item.price*item.qty).toLocaleString('ru-RU')} so'm</div>
+            </div>
+            <div style="display:flex;flex-direction:column;align-items:center;gap:4px;">
+              <button class="qty-btn" onclick="changeQty(\${i},-1)">−</button>
+              <span style="font-weight:700">\${item.qty}</span>
+              <button class="qty-btn" onclick="changeQty(\${i},1)">+</button>
+            </div>
+            <button class="cart-remove" onclick="removeFromCart(\${i})">✕</button>
+          </div>\`;
+        }).join('');
+        document.getElementById('cartSubtotal').textContent=subtotal.toLocaleString('ru-RU')+' so\'m';
+        document.getElementById('cartTotal').textContent=subtotal.toLocaleString('ru-RU')+' so\'m';
+      }
+
+      function changeQty(idx, delta){
+        cart[idx].qty = Math.max(1, cart[idx].qty+delta);
+        saveCart(); renderCartItems();
+      }
+
+      function openCart(){ renderCartItems(); document.getElementById('cartModal').classList.add('open'); }
+
+      function openOrderModal(){
+        document.getElementById('cartModal').classList.remove('open');
+        document.getElementById('orderFormView').style.display='block';
+        document.getElementById('orderSuccessView').style.display='none';
         document.getElementById('orderModal').classList.add('open');
       }
-      function closeOrderModal() {
-        document.getElementById('orderModal').classList.remove('open');
-      }
-      document.getElementById('orderModal').addEventListener('click', function(e) {
-        if (e.target === this) closeOrderModal();
+
+      function closeModal(id){ document.getElementById(id).classList.remove('open'); }
+
+      document.querySelectorAll('.modal-overlay').forEach(el=>{
+        el.addEventListener('click', function(e){ if(e.target===this) this.classList.remove('open'); });
       });
 
-      document.getElementById('orderForm').addEventListener('submit', async function(e) {
+      function updateDistricts(){
+        const region = document.getElementById('customerRegion').value;
+        const dg = document.getElementById('districtGroup');
+        const ds = document.getElementById('customerDistrict');
+        const db = document.getElementById('deliveryBox');
+        const pb = document.getElementById('paymentBox');
+        if(!region){ dg.style.display='none'; db.style.display='none'; pb.style.display='none'; return; }
+        const districts = DISTRICTS_DATA[region]||[];
+        ds.innerHTML='<option value="">-- Tuman tanlang --</option>'+districts.map(d=>\`<option>\${d}</option>\`).join('');
+        dg.style.display='block';
+        const delivery = DELIVERY_PRICES[region]||30000;
+        const subtotal = cart.reduce((s,i)=>s+i.price*i.qty,0);
+        const total = subtotal+delivery;
+        document.getElementById('dSubtotal').textContent=subtotal.toLocaleString('ru-RU')+' so\'m';
+        document.getElementById('dDelivery').textContent=delivery.toLocaleString('ru-RU')+' so\'m';
+        document.getElementById('dTotal').textContent=total.toLocaleString('ru-RU')+' so\'m';
+        db.style.display='block';
+        fetch('/api/config').then(r=>r.json()).then(cfg=>{
+          document.getElementById('payCard').textContent=cfg.cardNumber||'';
+          document.getElementById('payOwner').textContent=cfg.cardOwner||'';
+          pb.style.display='block';
+        });
+      }
+
+      document.getElementById('orderForm').addEventListener('submit', async function(e){
         e.preventDefault();
+        const region = document.getElementById('customerRegion').value;
+        const delivery = DELIVERY_PRICES[region]||30000;
+        const subtotal = cart.reduce((s,i)=>s+i.price*i.qty,0);
         const order = {
-          productId: "${p.id}",
-          productName: "${esc(p.name)}",
-          price: "${p.price}",
-          color: selectedColor,
-          size: selectedSize,
+          items: cart,
+          total: subtotal+delivery,
+          deliveryPrice: delivery,
           customerName: document.getElementById('customerName').value.trim(),
           customerPhone: document.getElementById('customerPhone').value.trim(),
-          region: document.getElementById('customerRegion').value,
-          district: document.getElementById('customerDistrict').value,
-          customerAddress: document.getElementById('customerRegion').value + ', ' + document.getElementById('customerDistrict').value + ', ' + document.getElementById('customerAddress').value.trim(),
+          customerAddress: region+', '+document.getElementById('customerDistrict').value+', '+document.getElementById('customerAddress').value.trim(),
           note: document.getElementById('orderNote').value.trim(),
         };
-        const res = await fetch('/api/orders', {
-          method: 'POST',
-          headers: {'Content-Type':'application/json'},
-          body: JSON.stringify(order)
-        });
-        if (res.ok) {
-          document.getElementById('orderFormView').style.display = 'none';
-          document.getElementById('orderSuccessView').style.display = 'block';
-        } else {
-          alert('Xatolik yuz berdi, qaytadan urinib ko\\'ring');
-        }
+        const res = await fetch('/api/orders',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(order)});
+        if(res.ok){
+          cart=[];saveCart();
+          document.getElementById('orderFormView').style.display='none';
+          document.getElementById('orderSuccessView').style.display='block';
+        } else { alert("Xatolik yuz berdi, qaytadan urinib ko'ring"); }
       });
+
+      function doSearch(){
+        const q = document.getElementById('searchInput').value;
+        window.location.href='/?q='+encodeURIComponent(q);
+      }
+
+      function filterCat(cat){
+        window.location.href='/?cat='+encodeURIComponent(cat);
+      }
+
+      function changeCardColor(dot, productId, imgIndex){
+        const p = PRODUCTS_DATA.find(x=>x.id===productId);
+        if(!p||!p.images) return;
+        const img = document.getElementById('card-img-'+productId);
+        if(img && p.images[imgIndex]) img.src=p.images[imgIndex];
+        dot.parentElement.querySelectorAll('.color-dot').forEach(d=>d.classList.remove('selected'));
+        dot.classList.add('selected');
+      }
+
+      updateCartBadge();
     </script>
   `);
 }
 
-function renderAdminLogin(error) {
-  return pageShell("Admin kirish", `
-    <div class="admin-login">
-      <h2 style="font-family: var(--font-display); color:var(--emerald-deep);">Kirish</h2>
-      <p style="color:var(--ink-soft); font-size:0.85rem; margin-bottom:16px;">Admin panelga kirish uchun parolni kiriting</p>
-      <form method="POST" action="${ADMIN_PATH}/login">
-        <div class="form-group"><input type="password" name="password" placeholder="Parol" /></div>
-        <button type="submit" class="btn-submit">Kirish</button>
-        ${error ? `<p style="color:var(--danger); font-size:0.85rem; margin-top:10px;">Parol noto'g'ri</p>` : ""}
-      </form>
+// ============ PRODUCT DETAIL ============
+async function renderDetail(env, id) {
+  const products = await getProducts(env);
+  const cfg = await getConfig(env);
+  const p = products.find(x=>x.id===id);
+  if(!p) return html("Topilmadi", `<div style="padding:40px;text-align:center"><a href="/">← Orqaga</a><p>Mahsulot topilmadi</p></div>`);
+
+  const images = (p.images&&p.images.length) ? p.images : [""];
+  const colors = (p.colors||[]).filter(Boolean);
+  const sizes = (p.sizes||[]).filter(Boolean);
+  const isAvail = p.status!=="soldout"&&p.status!=="soon";
+
+  return html(p.name+" - "+cfg.storeName, `
+    <header class="header">
+      <div class="header-inner">
+        <div class="logo">P<span>R</span>IMUS</div>
+        <div style="flex:1"></div>
+        <button class="cart-btn" onclick="openCart()">🛒 <span id="cartCountBadge" class="cart-count" style="display:none">0</span></button>
+      </div>
+    </header>
+    <div class="detail-wrap">
+      <a href="/" class="back-link">← Bosh sahifa</a>
+      <div class="detail-images">
+        <div class="detail-main-img"><img id="mainImg" src="${esc(images[0])}" alt="${esc(p.name)}"/></div>
+        ${images.length>1?`<div class="detail-thumbs">${images.map((img,i)=>`<div class="detail-thumb${i===0?" active":""}" onclick="switchImg(this,'${esc(img)}')"><img src="${esc(img)}" alt=""/></div>`).join("")}</div>`:""}
+      </div>
+      <h1 class="detail-name">${esc(p.name)}</h1>
+      <div class="detail-price">${fmt(p.price)}</div>
+      ${p.status==="soldout"?`<p style="color:var(--danger);font-weight:600;margin-bottom:12px;">Bu mahsulot sotildi</p>`:""}
+      ${p.status==="soon"?`<p style="color:var(--gold);font-weight:600;margin-bottom:12px;">Tez kunda sotuvga chiqadi</p>`:""}
+      <p style="color:var(--ink-soft);margin-bottom:14px;font-size:0.9rem;">${esc(p.description||"")}</p>
+      ${colors.length?`<div class="option-label">Rang tanlang</div><div class="option-pills" id="colorPills">${colors.map((c,i)=>`<button class="option-pill${i===0?" selected":""}" onclick="selectOpt('color',this,'${esc(c)}')">${esc(c)}</button>`).join("")}</div>`:""}
+      ${sizes.length?`<div class="option-label">O'lcham tanlang</div><div class="option-pills" id="sizePills">${sizes.map((s,i)=>`<button class="option-pill${i===0?" selected":""}" onclick="selectOpt('size',this,'${esc(s)}')">${esc(s)}</button>`).join("")}</div>`:""}
+      <div class="qty-wrap" style="margin-bottom:14px;">
+        <div class="option-label" style="margin:0">Miqdor:</div>
+        <button class="qty-btn" onclick="changeQty(-1)">−</button>
+        <span class="qty-num" id="qtyNum">1</span>
+        <button class="qty-btn" onclick="changeQty(1)">+</button>
+      </div>
+      ${isAvail?`
+        <button class="btn-add-cart" onclick="addToCartDetail()">🛒 Savatga qo'shish</button>
+        <button class="btn-buy-now" onclick="buyNow()">Hoziroq buyurtma berish</button>
+      `:`<button class="btn-buy-now" disabled style="opacity:0.5">${p.status==="soldout"?"Sotildi":"Tez kunda"}</button>`}
     </div>
+
+    <!-- CART MODAL -->
+    <div class="modal-overlay" id="cartModal">
+      <div class="modal">
+        <h3 class="modal-title">🛒 Savat</h3>
+        <div id="cartItems"></div>
+        <div id="cartEmpty" style="text-align:center;padding:30px;color:var(--ink-soft);display:none">Savat bo'sh</div>
+        <div id="cartFooter" style="display:none">
+          <div class="cart-total">
+            <div class="cart-total-main"><span>Jami:</span><span id="cartTotal"></span></div>
+          </div>
+          <button class="btn-submit" onclick="openOrderFromCart()">Buyurtma berish</button>
+        </div>
+        <button class="btn-cancel" onclick="closeModal('cartModal')">Yopish</button>
+      </div>
+    </div>
+
+    <!-- ORDER MODAL -->
+    <div class="modal-overlay" id="orderModal">
+      <div class="modal">
+        <div id="orderFormView">
+          <h3 class="modal-title">Buyurtma berish</h3>
+          <form id="orderForm">
+            <div class="form-group"><label>Ismingiz</label><input type="text" id="customerName" required/></div>
+            <div class="form-group"><label>Telefon</label><input type="tel" id="customerPhone" required placeholder="+998 90 123 45 67"/></div>
+            <div class="form-group">
+              <label>Viloyat</label>
+              <select id="customerRegion" required onchange="updateDistricts()">
+                <option value="">-- Viloyat tanlang --</option>
+                ${Object.keys(DELIVERY_PRICES).map(r=>`<option>${esc(r)}</option>`).join("")}
+              </select>
+            </div>
+            <div class="form-group" id="districtGroup" style="display:none">
+              <label>Tuman</label>
+              <select id="customerDistrict" required><option value="">-- Tuman tanlang --</option></select>
+            </div>
+            <div class="form-group"><label>Ko'cha, uy raqami</label><input type="text" id="customerAddress" required/></div>
+            <div class="form-group"><label>Izoh (ixtiyoriy)</label><textarea id="orderNote" rows="2"></textarea></div>
+            <div class="delivery-box" id="deliveryBox">
+              <div class="delivery-row"><span>Mahsulotlar:</span><span id="dSubtotal"></span></div>
+              <div class="delivery-row"><span>Yetkazib berish:</span><span id="dDelivery"></span></div>
+              <div class="delivery-total"><span>JAMI TO'LOV:</span><span id="dTotal"></span></div>
+            </div>
+            <div class="warning-box">⚠️ <strong>Diqqat!</strong> Yuqoridagi jami summani to'lang!</div>
+            <div class="payment-box" id="paymentBox" style="display:none">
+              <div class="payment-label">TO'LOV UCHUN KARTA</div>
+              <div class="payment-card" id="payCard"></div>
+              <div style="font-size:0.82rem;opacity:0.85;margin-top:3px;" id="payOwner"></div>
+            </div>
+            <button type="submit" class="btn-submit">Buyurtmani tasdiqlash</button>
+            <button type="button" class="btn-cancel" onclick="closeModal('orderModal')">Bekor qilish</button>
+          </form>
+        </div>
+        <div id="orderSuccessView" style="display:none">
+          <div class="success-box">
+            <div class="success-icon">✓</div>
+            <h3 style="font-family:Georgia,serif;color:var(--green);margin-bottom:8px;">Buyurtma qabul qilindi!</h3>
+            <p style="color:var(--ink-soft);font-size:0.9rem;margin-bottom:14px;">To'lov chekining screenshotini Telegram orqali yuboring.</p>
+            <a href="https://t.me/shokhjahon_primus" target="_blank" class="btn-tg">📸 Screenshot yuborish</a>
+            <button class="btn-cancel" onclick="window.location.href='/'">Yopish</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      const PRODUCT = ${JSON.stringify(p)};
+      const DELIVERY_PRICES = {"Toshkent shahri": 15000, "Toshkent viloyati": 20000, "Andijon viloyati": 25000, "Fargona viloyati": 25000, "Namangan viloyati": 25000, "Samarqand viloyati": 25000, "Jizzax viloyati": 25000, "Sirdaryo viloyati": 25000, "Buxoro viloyati": 30000, "Navoiy viloyati": 30000, "Qashqadaryo viloyati": 30000, "Surxondaryo viloyati": 30000, "Xorazm viloyati": 35000, "Qoraqalpogiston": 35000};
+      const DISTRICTS_DATA = JSON.parse(decodeURIComponent(DISTRICTS_ENCODED));
+      let selectedColor = colors.length ? colors[0] : '';
+      let selectedSize = sizes.length ? sizes[0] : '';
+      let qty = 1;
+      let cart = JSON.parse(localStorage.getItem('primus_cart')||'[]');
+      let orderItems = [];
+
+      function saveCart(){ localStorage.setItem('primus_cart',JSON.stringify(cart)); updateCartBadge(); }
+      function updateCartBadge(){
+        const total=cart.reduce((s,i)=>s+i.qty,0);
+        const badge=document.getElementById('cartCountBadge');
+        if(total>0){badge.textContent=total;badge.style.display='flex';}else{badge.style.display='none';}
+      }
+
+      function switchImg(thumb, src){
+        document.getElementById('mainImg').src=src;
+        document.querySelectorAll('.detail-thumb').forEach(t=>t.classList.remove('active'));
+        thumb.classList.add('active');
+      }
+
+      function selectOpt(type, btn, val){
+        btn.parentElement.querySelectorAll('.option-pill').forEach(b=>b.classList.remove('selected'));
+        btn.classList.add('selected');
+        if(type==='color'){
+          selectedColor=val;
+          const idx=(PRODUCT.colors||[]).indexOf(val);
+          if(idx>=0&&PRODUCT.images&&PRODUCT.images[idx]){
+            document.getElementById('mainImg').src=PRODUCT.images[idx];
+            document.querySelectorAll('.detail-thumb').forEach((t,i)=>{t.classList.toggle('active',i===idx);});
+          }
+        }
+        if(type==='size') selectedSize=val;
+      }
+
+      function changeQty(delta){
+        qty=Math.max(1,qty+delta);
+        document.getElementById('qtyNum').textContent=qty;
+      }
+
+      function addToCartDetail(){
+        const item={id:PRODUCT.id,name:PRODUCT.name,price:Number(PRODUCT.price),image:(PRODUCT.images&&PRODUCT.images[0])||"",color:selectedColor,size:selectedSize,qty};
+        const existing=cart.find(i=>i.id===PRODUCT.id&&i.color===selectedColor&&i.size===selectedSize);
+        if(existing){existing.qty+=qty;}else{cart.push(item);}
+        saveCart();
+        alert("Savatga qo'shildi!");
+      }
+
+      function buyNow(){
+        orderItems=[{id:PRODUCT.id,name:PRODUCT.name,price:Number(PRODUCT.price),image:(PRODUCT.images&&PRODUCT.images[0])||"",color:selectedColor,size:selectedSize,qty}];
+        document.getElementById('orderFormView').style.display='block';
+        document.getElementById('orderSuccessView').style.display='none';
+        document.getElementById('orderModal').classList.add('open');
+      }
+
+      function openCart(){
+        renderCartItems();
+        document.getElementById('cartModal').classList.add('open');
+      }
+
+      function openOrderFromCart(){
+        orderItems=[...cart];
+        document.getElementById('cartModal').classList.remove('open');
+        document.getElementById('orderFormView').style.display='block';
+        document.getElementById('orderSuccessView').style.display='none';
+        document.getElementById('orderModal').classList.add('open');
+      }
+
+      function closeModal(id){ document.getElementById(id).classList.remove('open'); }
+
+      document.querySelectorAll('.modal-overlay').forEach(el=>{
+        el.addEventListener('click',function(e){if(e.target===this)this.classList.remove('open');});
+      });
+
+      function renderCartItems(){
+        const el=document.getElementById('cartItems');
+        const empty=document.getElementById('cartEmpty');
+        const footer=document.getElementById('cartFooter');
+        if(cart.length===0){el.innerHTML='';empty.style.display='block';footer.style.display='none';return;}
+        empty.style.display='none';footer.style.display='block';
+        let total=0;
+        el.innerHTML=cart.map((item,i)=>{
+          total+=item.price*item.qty;
+          return \`<div class="cart-item">
+            <img src="\${item.image}" alt=""/>
+            <div class="cart-item-info">
+              <div class="cart-item-name">\${item.name}</div>
+              <div class="cart-item-meta">\${item.color||''} \${item.size||''} x\${item.qty}</div>
+              <div class="cart-item-price">\${(item.price*item.qty).toLocaleString('ru-RU')} so'm</div>
+            </div>
+            <button class="cart-remove" onclick="removeCartItem(\${i})">✕</button>
+          </div>\`;
+        }).join('');
+        document.getElementById('cartTotal').textContent=total.toLocaleString('ru-RU')+' so\'m';
+      }
+
+      function removeCartItem(i){ cart.splice(i,1); saveCart(); renderCartItems(); }
+
+      function updateDistricts(){
+        const region=document.getElementById('customerRegion').value;
+        const dg=document.getElementById('districtGroup');
+        const ds=document.getElementById('customerDistrict');
+        const db=document.getElementById('deliveryBox');
+        const pb=document.getElementById('paymentBox');
+        if(!region){dg.style.display='none';db.style.display='none';pb.style.display='none';return;}
+        const districts=DISTRICTS_DATA[region]||[];
+        ds.innerHTML='<option value="">-- Tuman tanlang --</option>'+districts.map(d=>\`<option>\${d}</option>\`).join('');
+        dg.style.display='block';
+        const delivery=DELIVERY_PRICES[region]||30000;
+        const items=orderItems.length>0?orderItems:cart;
+        const subtotal=items.reduce((s,i)=>s+i.price*i.qty,0);
+        document.getElementById('dSubtotal').textContent=subtotal.toLocaleString('ru-RU')+' so\'m';
+        document.getElementById('dDelivery').textContent=delivery.toLocaleString('ru-RU')+' so\'m';
+        document.getElementById('dTotal').textContent=(subtotal+delivery).toLocaleString('ru-RU')+' so\'m';
+        db.style.display='block';
+        fetch('/api/config').then(r=>r.json()).then(cfg=>{
+          document.getElementById('payCard').textContent=cfg.cardNumber||'';
+          document.getElementById('payOwner').textContent=cfg.cardOwner||'';
+          pb.style.display='block';
+        });
+      }
+
+      document.getElementById('orderForm').addEventListener('submit',async function(e){
+        e.preventDefault();
+        const region=document.getElementById('customerRegion').value;
+        const delivery=DELIVERY_PRICES[region]||30000;
+        const items=orderItems.length>0?orderItems:cart;
+        const subtotal=items.reduce((s,i)=>s+i.price*i.qty,0);
+        const order={
+          items,total:subtotal+delivery,deliveryPrice:delivery,
+          customerName:document.getElementById('customerName').value.trim(),
+          customerPhone:document.getElementById('customerPhone').value.trim(),
+          customerAddress:region+', '+document.getElementById('customerDistrict').value+', '+document.getElementById('customerAddress').value.trim(),
+          note:document.getElementById('orderNote').value.trim(),
+        };
+        const res=await fetch('/api/orders',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(order)});
+        if(res.ok){
+          cart=[];saveCart();
+          document.getElementById('orderFormView').style.display='none';
+          document.getElementById('orderSuccessView').style.display='block';
+        }else{alert("Xatolik yuz berdi");}
+      });
+
+      updateCartBadge();
+    </script>
   `);
 }
 
-async function renderAdminPanel(env) {
+// ============ ADMIN PANEL ============
+async function renderAdmin(env) {
   const products = await getProducts(env);
   const orders = await getOrders(env);
-  const config = await getConfig(env);
+  const cfg = await getConfig(env);
 
-  const productRows = products.length === 0
-    ? `<div class="empty-admin">Hozircha mahsulot qo'shilmagan</div>`
-    : products.map((p) => `
-      <div class="admin-product-row">
-        <img src="${esc((p.images && p.images[0]) || '')}" alt="" />
-        <div class="admin-product-info">
+  const newOrders = orders.filter(o=>o.status!=='bajarildi');
+  const doneOrders = orders.filter(o=>o.status==='bajarildi');
+
+  function orderCard(o, isDone) {
+    const items = (o.items||[]).map(i=>`${esc(i.name)} x${i.qty}${i.color?' ('+esc(i.color)+')':''}`).join(', ');
+    return `<div class="order-card${isDone?' done':''}">
+      <div class="order-top">
+        <strong style="font-size:0.88rem;">${items}</strong>
+        <span class="order-status${isDone?' done':''}">${isDone?'Bajarildi':'Yangi'}</span>
+      </div>
+      <div class="order-detail"><strong>Jami:</strong> ${fmt(o.total)} so'm</div>
+      <div class="order-detail"><strong>Mijoz:</strong> ${esc(o.customerName)}</div>
+      <div class="order-detail"><strong>Telefon:</strong> ${esc(o.customerPhone)}</div>
+      <div class="order-detail"><strong>Manzil:</strong> ${esc(o.customerAddress)}</div>
+      ${o.note?`<div class="order-detail"><strong>Izoh:</strong> ${esc(o.note)}</div>`:''}
+      <div class="order-detail" style="font-size:0.75rem;">${new Date(o.date).toLocaleString('uz-UZ')}</div>
+      <div class="order-actions">
+        ${!isDone?`<button class="icon-btn success" onclick="markDone('${o.id}')">✅ Bajarildi</button>`:''}
+        <button class="icon-btn danger" onclick="deleteOrder('${o.id}')">🗑️ O'chirish</button>
+      </div>
+    </div>`;
+  }
+
+  const productRows = products.length===0
+    ? `<div style="text-align:center;padding:30px;color:var(--ink-soft)">Hozircha mahsulot yo'q</div>`
+    : products.map(p=>`
+      <div class="admin-prod-row">
+        <img src="${esc((p.images&&p.images[0])||'')}" alt=""/>
+        <div class="admin-prod-info">
           <strong>${esc(p.name)}</strong>
-          <span>${fmtPrice(p.price)} so'm &middot; ${p.status === 'soldout' ? 'Sotildi' : p.status === 'soon' ? 'Tez kunda' : 'Faol'}</span>
+          <span>${fmt(p.price)} so'm · ${esc(p.category||'—')} · ${p.status==='soldout'?'Sotildi':p.status==='soon'?'Tez kunda':'Faol'}</span>
         </div>
-        <button class="icon-btn" onclick="editProduct('${p.id}')">Tahrirlash</button>
-        <button class="icon-btn danger" onclick="deleteProduct('${p.id}')">O'chirish</button>
-      </div>
-    `).join("");
+        <button class="icon-btn" onclick="editProduct('${p.id}')">✏️</button>
+        <button class="icon-btn danger" onclick="deleteProduct('${p.id}')">🗑️</button>
+      </div>`).join('');
 
-  const orderRows = orders.length === 0
-    ? `<div class="empty-admin">Hozircha buyurtma yo'q</div>`
-    : orders.map((o) => `
-      <div class="order-card">
-        <div style="display:flex; justify-content:space-between; margin-bottom:8px;">
-          <strong>${esc(o.productName)}</strong>
-          <span class="order-status ${o.status === 'bajarildi' ? 'bajarildi' : ''}">${esc(o.status)}</span>
-        </div>
-        ${o.color ? `<div style="font-size:0.85rem; color:var(--ink-soft);">Rang: ${esc(o.color)}</div>` : ""}
-        ${o.size ? `<div style="font-size:0.85rem; color:var(--ink-soft);">O'lcham: ${esc(o.size)}</div>` : ""}
-        <div style="font-size:0.85rem; color:var(--ink-soft);">Mijoz: ${esc(o.customerName)}</div>
-        <div style="font-size:0.85rem; color:var(--ink-soft);">Telefon: ${esc(o.customerPhone)}</div>
-        <div style="font-size:0.85rem; color:var(--ink-soft);">Manzil: ${esc(o.customerAddress)}</div>
-        ${o.note ? `<div style="font-size:0.85rem; color:var(--ink-soft);">Izoh: ${esc(o.note)}</div>` : ""}
-        <div style="font-size:0.75rem; color:var(--ink-soft); margin-top:6px;">${new Date(o.date).toLocaleString("uz-UZ")}</div>
-        ${o.status !== 'bajarildi' ? `<button class="icon-btn" style="margin-top:8px;" onclick="markDone('${o.id}')">Bajarildi deb belgilash</button>` : ""}
-      </div>
-    `).join("");
-
-  return pageShell("Admin panel", `
-    <header class="site-header">
+  return html("Admin - Primus", `
+    <header class="header">
       <div class="header-inner">
-        <div class="brand">Admin panel</div>
-        <a href="/" style="color:var(--cream); opacity:0.8; font-size:0.85rem;">Saytga qaytish</a>
+        <div class="logo">P<span>R</span>IMUS Admin</div>
+        <a href="/" style="color:var(--cream);opacity:0.8;font-size:0.82rem;">Saytga qaytish</a>
       </div>
     </header>
     <div class="admin-wrap">
       <div class="admin-tabs">
         <button class="admin-tab active" id="tabProducts" onclick="switchTab('products')">Mahsulotlar</button>
-        <button class="admin-tab" id="tabOrders" onclick="switchTab('orders')">Buyurtmalar</button>
+        <button class="admin-tab" id="tabNewOrders" onclick="switchTab('newOrders')">Yangi buyurtmalar (${newOrders.length})</button>
+        <button class="admin-tab" id="tabDoneOrders" onclick="switchTab('doneOrders')">Bajarilganlar (${doneOrders.length})</button>
         <button class="admin-tab" id="tabSettings" onclick="switchTab('settings')">Sozlamalar</button>
       </div>
 
+      <!-- MAHSULOTLAR -->
       <div id="productsPanel">
         <div class="admin-section">
           <h2 id="formTitle">Yangi mahsulot qo'shish</h2>
           <form id="productForm">
-            <input type="hidden" id="editId" value="" />
-            <div class="form-group"><label>Mahsulot nomi</label><input type="text" id="prodName" required /></div>
-            <div class="form-group"><label>Narxi (so'm)</label><input type="number" id="prodPrice" required /></div>
+            <input type="hidden" id="editId"/>
+            <div class="form-group"><label>Nomi</label><input type="text" id="prodName" required/></div>
+            <div class="form-group"><label>Narxi (so'm)</label><input type="number" id="prodPrice" required/></div>
+            <div class="form-group"><label>Kategoriya</label>
+              <select id="prodCategory">
+                ${CATEGORIES.filter(c=>c!=="Barchasi").map(c=>`<option>${esc(c)}</option>`).join("")}
+              </select>
+            </div>
             <div class="form-group"><label>Tavsif</label><textarea id="prodDesc" rows="2"></textarea></div>
             <div class="form-group">
-              <label>Rasm manzillari (URL) - bir nechta qo'shish mumkin</label>
-              <div id="imageList">
-                <div class="imagelist-row"><input type="text" class="imgInput" placeholder="https://..." /></div>
-              </div>
-              <button type="button" class="icon-btn" onclick="addImageField()">+ Yana rasm qo'shish</button>
+              <label>Rasmlar (URL) — har bir rang uchun alohida rasm qo'shing</label>
+              <div id="imageList"><div class="imagelist-row"><input type="text" class="imgInput" placeholder="https://..."/></div></div>
+              <button type="button" class="icon-btn" style="margin-top:6px" onclick="addImgField()">+ Rasm qo'shish</button>
             </div>
-            <div class="form-group"><label>Ranglar (vergul bilan ajrating, masalan: Qora, Oq, Ko'k)</label><input type="text" id="prodColors" placeholder="Qora, Oq, Ko'k" /></div>
-            <div class="form-group"><label>O'lchamlar (vergul bilan ajrating, masalan: S, M, L, XL)</label><input type="text" id="prodSizes" placeholder="S, M, L, XL" /></div>
-            <div class="form-group">
-              <label>Holati</label>
+            <div class="form-group"><label>Ranglar (vergul bilan: Qora, Oq, Ko'k)</label><input type="text" id="prodColors"/></div>
+            <div class="form-group"><label>O'lchamlar (vergul bilan: S, M, L, XL)</label><input type="text" id="prodSizes"/></div>
+            <div class="form-group"><label>Holati</label>
               <select id="prodStatus">
-                <option value="active">Faol (sotuvda)</option>
+                <option value="active">Faol</option>
                 <option value="soldout">Sotildi</option>
                 <option value="soon">Tez kunda</option>
               </select>
             </div>
-            <button type="submit" class="btn-submit" id="submitBtn">Mahsulot qo'shish</button>
-            <button type="button" class="icon-btn" id="cancelEditBtn" style="display:none; margin-top:8px; width:100%;" onclick="cancelEdit()">Tahrirlashni bekor qilish</button>
+            <button type="submit" class="btn-submit" id="submitBtn">Qo'shish</button>
+            <button type="button" class="btn-cancel" id="cancelEditBtn" style="display:none" onclick="cancelEdit()">Bekor qilish</button>
           </form>
         </div>
         <div class="admin-section">
-          <h2>Mavjud mahsulotlar</h2>
+          <h2>Mavjud mahsulotlar (${products.length})</h2>
           <div id="productList">${productRows}</div>
         </div>
       </div>
 
-      <div id="ordersPanel" style="display:none;">
+      <!-- YANGI BUYURTMALAR -->
+      <div id="newOrdersPanel" style="display:none">
         <div class="admin-section">
-          <h2>Kelgan buyurtmalar</h2>
-          <div id="orderList">${orderRows}</div>
+          <h2>Yangi buyurtmalar</h2>
+          ${newOrders.length===0?'<div style="text-align:center;padding:30px;color:var(--ink-soft)">Hozircha yangi buyurtma yo\'q</div>':newOrders.map(o=>orderCard(o,false)).join('')}
         </div>
       </div>
 
-      <div id="settingsPanel" style="display:none;">
+      <!-- BAJARILGAN BUYURTMALAR -->
+      <div id="doneOrdersPanel" style="display:none">
+        <div class="admin-section">
+          <h2>Bajarilgan buyurtmalar</h2>
+          ${doneOrders.length===0?'<div style="text-align:center;padding:30px;color:var(--ink-soft)">Hozircha bajarilgan buyurtma yo\'q</div>':doneOrders.map(o=>orderCard(o,true)).join('')}
+        </div>
+      </div>
+
+      <!-- SOZLAMALAR -->
+      <div id="settingsPanel" style="display:none">
         <div class="admin-section">
           <h2>Do'kon sozlamalari</h2>
           <form id="settingsForm">
-            <div class="form-group"><label>Do'kon nomi</label><input type="text" id="settStoreName" value="${esc(config.storeName)}" /></div>
-            <div class="form-group"><label>Karta raqami</label><input type="text" id="settCardNumber" value="${esc(config.cardNumber)}" /></div>
-            <div class="form-group"><label>Karta egasining ismi</label><input type="text" id="settCardOwner" value="${esc(config.cardOwner)}" /></div>
-            <div class="form-group"><label>Telegram bildirishnoma manzili (Worker URL)</label><input type="text" id="settTelegramUrl" value="${esc(config.telegramWorkerUrl)}" /></div>
+            <div class="form-group"><label>Do'kon nomi</label><input type="text" id="settName" value="${esc(cfg.storeName)}"/></div>
+            <div class="form-group"><label>Karta raqami</label><input type="text" id="settCard" value="${esc(cfg.cardNumber)}"/></div>
+            <div class="form-group"><label>Karta egasi</label><input type="text" id="settOwner" value="${esc(cfg.cardOwner)}"/></div>
+            <div class="form-group"><label>Telegram Worker URL</label><input type="text" id="settTg" value="${esc(cfg.telegramWorkerUrl)}"/></div>
             <button type="submit" class="btn-submit">Saqlash</button>
           </form>
         </div>
@@ -565,179 +922,146 @@ async function renderAdminPanel(env) {
     </div>
 
     <script>
-      const PRODUCTS = ${JSON.stringify(products)};
+      const PRODUCTS_DATA = ${JSON.stringify(products)};
 
-      function switchTab(tab) {
-        ['products','orders','settings'].forEach(t => {
-          document.getElementById('tab' + t[0].toUpperCase() + t.slice(1)).classList.toggle('active', t === tab);
-          document.getElementById(t + 'Panel').style.display = t === tab ? 'block' : 'none';
+      function switchTab(tab){
+        ['products','newOrders','doneOrders','settings'].forEach(t=>{
+          document.getElementById('tab'+t[0].toUpperCase()+t.slice(1)).classList.toggle('active',t===tab);
+          document.getElementById(t+'Panel').style.display=t===tab?'block':'none';
         });
       }
 
-      function addImageField() {
-        const list = document.getElementById('imageList');
-        const row = document.createElement('div');
-        row.className = 'imagelist-row';
-        row.innerHTML = '<input type="text" class="imgInput" placeholder="https://..." /><button type="button" class="icon-btn danger" onclick="this.parentElement.remove()">X</button>';
+      function addImgField(){
+        const list=document.getElementById('imageList');
+        const row=document.createElement('div');
+        row.className='imagelist-row';
+        row.innerHTML='<input type="text" class="imgInput" placeholder="https://..."/><button type="button" class="icon-btn danger" onclick="this.parentElement.remove()">✕</button>';
         list.appendChild(row);
       }
 
-      function getImageValues() {
-        return Array.from(document.querySelectorAll('.imgInput')).map(i => i.value.trim()).filter(Boolean);
+      function getImages(){ return Array.from(document.querySelectorAll('.imgInput')).map(i=>i.value.trim()).filter(Boolean); }
+      function setImages(imgs){
+        const list=document.getElementById('imageList');
+        list.innerHTML=(imgs.length?imgs:['']).map((img,i)=>
+          \`<div class="imagelist-row"><input type="text" class="imgInput" value="\${img}"/>\${i>0?'<button type="button" class="icon-btn danger" onclick="this.parentElement.remove()">✕</button>':''}</div>\`
+        ).join('');
       }
 
-      function setImageValues(images) {
-        const list = document.getElementById('imageList');
-        list.innerHTML = '';
-        (images.length ? images : ['']).forEach(img => {
-          const row = document.createElement('div');
-          row.className = 'imagelist-row';
-          row.innerHTML = '<input type="text" class="imgInput" placeholder="https://..." value="' + img.replace(/"/g,'&quot;') + '" /><button type="button" class="icon-btn danger" onclick="this.parentElement.remove()">X</button>';
-          list.appendChild(row);
-        });
-      }
-
-      document.getElementById('productForm').addEventListener('submit', async function(e) {
+      document.getElementById('productForm').addEventListener('submit',async function(e){
         e.preventDefault();
-        const editId = document.getElementById('editId').value;
-        const payload = {
-          id: editId || undefined,
-          name: document.getElementById('prodName').value.trim(),
-          price: document.getElementById('prodPrice').value,
-          description: document.getElementById('prodDesc').value.trim(),
-          images: getImageValues(),
-          colors: document.getElementById('prodColors').value.split(',').map(s => s.trim()).filter(Boolean),
-          sizes: document.getElementById('prodSizes').value.split(',').map(s => s.trim()).filter(Boolean),
-          status: document.getElementById('prodStatus').value,
+        const editId=document.getElementById('editId').value;
+        const payload={
+          id:editId||undefined,
+          name:document.getElementById('prodName').value.trim(),
+          price:document.getElementById('prodPrice').value,
+          category:document.getElementById('prodCategory').value,
+          description:document.getElementById('prodDesc').value.trim(),
+          images:getImages(),
+          colors:document.getElementById('prodColors').value.split(',').map(s=>s.trim()).filter(Boolean),
+          sizes:document.getElementById('prodSizes').value.split(',').map(s=>s.trim()).filter(Boolean),
+          status:document.getElementById('prodStatus').value,
         };
-        const method = editId ? 'PUT' : 'POST';
-        await fetch('/api/products', { method, headers: {'Content-Type':'application/json'}, body: JSON.stringify(payload) });
+        await fetch('/api/products',{method:editId?'PUT':'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
         window.location.reload();
       });
 
-      function editProduct(id) {
-        const p = PRODUCTS.find(x => x.id === id);
-        if (!p) return;
-        document.getElementById('editId').value = p.id;
-        document.getElementById('prodName').value = p.name;
-        document.getElementById('prodPrice').value = p.price;
-        document.getElementById('prodDesc').value = p.description || '';
-        setImageValues(p.images || []);
-        document.getElementById('prodColors').value = (p.colors || []).join(', ');
-        document.getElementById('prodSizes').value = (p.sizes || []).join(', ');
-        document.getElementById('prodStatus').value = p.status || 'active';
-        document.getElementById('formTitle').textContent = 'Mahsulotni tahrirlash';
-        document.getElementById('submitBtn').textContent = 'Saqlash';
-        document.getElementById('cancelEditBtn').style.display = 'block';
+      function editProduct(id){
+        const p=PRODUCTS_DATA.find(x=>x.id===id);
+        if(!p)return;
+        document.getElementById('editId').value=p.id;
+        document.getElementById('prodName').value=p.name;
+        document.getElementById('prodPrice').value=p.price;
+        document.getElementById('prodCategory').value=p.category||'Erkaklar';
+        document.getElementById('prodDesc').value=p.description||'';
+        setImages(p.images||[]);
+        document.getElementById('prodColors').value=(p.colors||[]).join(', ');
+        document.getElementById('prodSizes').value=(p.sizes||[]).join(', ');
+        document.getElementById('prodStatus').value=p.status||'active';
+        document.getElementById('formTitle').textContent='Mahsulotni tahrirlash';
+        document.getElementById('submitBtn').textContent='Saqlash';
+        document.getElementById('cancelEditBtn').style.display='block';
         window.scrollTo(0,0);
       }
 
-      function cancelEdit() {
+      function cancelEdit(){
         document.getElementById('productForm').reset();
-        document.getElementById('editId').value = '';
-        setImageValues([]);
-        document.getElementById('formTitle').textContent = "Yangi mahsulot qo'shish";
-        document.getElementById('submitBtn').textContent = 'Mahsulot qo\\'shish';
-        document.getElementById('cancelEditBtn').style.display = 'none';
+        document.getElementById('editId').value='';
+        setImages([]);
+        document.getElementById('formTitle').textContent="Yangi mahsulot qo'shish";
+        document.getElementById('submitBtn').textContent="Qo'shish";
+        document.getElementById('cancelEditBtn').style.display='none';
       }
 
-      async function deleteProduct(id) {
-        if (!confirm("Bu mahsulotni o'chirishni tasdiqlaysizmi?")) return;
-        await fetch('/api/products?id=' + id, { method: 'DELETE' });
+      async function deleteProduct(id){
+        if(!confirm("O'chirishni tasdiqlaysizmi?"))return;
+        await fetch('/api/products?id='+id,{method:'DELETE'});
         window.location.reload();
       }
 
-      async function markDone(id) {
-        await fetch('/api/orders/' + id, { method: 'PUT', headers: {'Content-Type':'application/json'}, body: JSON.stringify({status:'bajarildi'}) });
+      async function markDone(id){
+        await fetch('/api/orders/'+id,{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify({status:'bajarildi'})});
         window.location.reload();
       }
 
-      document.getElementById('settingsForm').addEventListener('submit', async function(e) {
+      async function deleteOrder(id){
+        if(!confirm("Buyurtmani o'chirishni tasdiqlaysizmi?"))return;
+        await fetch('/api/orders/'+id,{method:'DELETE'});
+        window.location.reload();
+      }
+
+      document.getElementById('settingsForm').addEventListener('submit',async function(e){
         e.preventDefault();
-        const payload = {
-          storeName: document.getElementById('settStoreName').value.trim(),
-          cardNumber: document.getElementById('settCardNumber').value.trim(),
-          cardOwner: document.getElementById('settCardOwner').value.trim(),
-          telegramWorkerUrl: document.getElementById('settTelegramUrl').value.trim(),
-        };
-        await fetch('/api/config', { method: 'PUT', headers: {'Content-Type':'application/json'}, body: JSON.stringify(payload) });
+        await fetch('/api/config',{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify({
+          storeName:document.getElementById('settName').value.trim(),
+          cardNumber:document.getElementById('settCard').value.trim(),
+          cardOwner:document.getElementById('settOwner').value.trim(),
+          telegramWorkerUrl:document.getElementById('settTg').value.trim(),
+        })});
         alert('Sozlamalar saqlandi!');
       });
     </script>
   `);
 }
 
-// ============================================
-// AUTentifikatsiya (cookie orqali)
-// ============================================
-
-function isAuthed(request) {
-  const cookie = request.headers.get("Cookie") || "";
-  return cookie.includes("admin_session=valid");
-}
-
-// ============================================
-// TELEGRAM
-// ============================================
-
-async function notifyTelegram(env, order) {
-  const config = await getConfig(env);
-  if (!config.telegramWorkerUrl) return;
-  const message = "Yangi buyurtma! Mahsulot: " + order.productName +
-    (order.color ? " Rang: " + order.color : "") +
-    (order.size ? " Olcham: " + order.size : "") +
-    " Narx: " + order.price +
-    " Ism: " + order.customerName +
-    " Telefon: " + order.customerPhone +
-    " Manzil: " + order.customerAddress +
-    (order.note ? " Izoh: " + order.note : "");
-  try {
-    await fetch(config.telegramWorkerUrl, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ message }),
-    });
-  } catch (e) {}
-}
-
-// ============================================
-// ASOSIY HANDLER
-// ============================================
-
+// ============ MAIN HANDLER ============
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
     const path = url.pathname;
 
-    // --- API: mahsulotlar ---
+    // API config GET
+    if (path === "/api/config" && request.method === "GET") {
+      const cfg = await getConfig(env);
+      return new Response(JSON.stringify(cfg), {headers:{"Content-Type":"application/json","Access-Control-Allow-Origin":"*"}});
+    }
+
+    // API products
     if (path === "/api/products" && request.method === "POST") {
-      if (!isAuthed(request)) return new Response("Unauthorized", { status: 401 });
+      if (!isAuthed(request)) return new Response("Unauthorized",{status:401});
       const body = await request.json();
       const products = await getProducts(env);
       body.id = Date.now().toString();
       products.push(body);
       await saveProducts(env, products);
-      return new Response(JSON.stringify({ ok: true }), { headers: { "Content-Type": "application/json" } });
+      return new Response(JSON.stringify({ok:true}),{headers:{"Content-Type":"application/json"}});
     }
     if (path === "/api/products" && request.method === "PUT") {
-      if (!isAuthed(request)) return new Response("Unauthorized", { status: 401 });
+      if (!isAuthed(request)) return new Response("Unauthorized",{status:401});
       const body = await request.json();
       const products = await getProducts(env);
-      const idx = products.findIndex((p) => p.id === body.id);
-      if (idx !== -1) products[idx] = { ...products[idx], ...body };
+      const idx = products.findIndex(p=>p.id===body.id);
+      if (idx!==-1) products[idx]={...products[idx],...body};
       await saveProducts(env, products);
-      return new Response(JSON.stringify({ ok: true }), { headers: { "Content-Type": "application/json" } });
+      return new Response(JSON.stringify({ok:true}),{headers:{"Content-Type":"application/json"}});
     }
     if (path === "/api/products" && request.method === "DELETE") {
-      if (!isAuthed(request)) return new Response("Unauthorized", { status: 401 });
+      if (!isAuthed(request)) return new Response("Unauthorized",{status:401});
       const id = url.searchParams.get("id");
-      let products = await getProducts(env);
-      products = products.filter((p) => p.id !== id);
-      await saveProducts(env, products);
-      return new Response(JSON.stringify({ ok: true }), { headers: { "Content-Type": "application/json" } });
+      await saveProducts(env, (await getProducts(env)).filter(p=>p.id!==id));
+      return new Response(JSON.stringify({ok:true}),{headers:{"Content-Type":"application/json"}});
     }
 
-    // --- API: buyurtmalar ---
+    // API orders
     if (path === "/api/orders" && request.method === "POST") {
       const body = await request.json();
       const orders = await getOrders(env);
@@ -747,62 +1071,62 @@ export default {
       orders.unshift(body);
       await saveOrders(env, orders);
       await notifyTelegram(env, body);
-      return new Response(JSON.stringify({ ok: true }), { headers: { "Content-Type": "application/json" } });
+      return new Response(JSON.stringify({ok:true}),{headers:{"Content-Type":"application/json"}});
     }
     if (path.startsWith("/api/orders/") && request.method === "PUT") {
-      if (!isAuthed(request)) return new Response("Unauthorized", { status: 401 });
-      const id = path.split("/").pop();
+      if (!isAuthed(request)) return new Response("Unauthorized",{status:401});
+      const id = path.split("/api/orders/")[1];
       const body = await request.json();
       const orders = await getOrders(env);
-      const idx = orders.findIndex((o) => o.id === id);
-      if (idx !== -1) orders[idx].status = body.status;
+      const idx = orders.findIndex(o=>o.id===id);
+      if (idx!==-1) orders[idx].status = body.status;
       await saveOrders(env, orders);
-      return new Response(JSON.stringify({ ok: true }), { headers: { "Content-Type": "application/json" } });
+      return new Response(JSON.stringify({ok:true}),{headers:{"Content-Type":"application/json"}});
+    }
+    if (path.startsWith("/api/orders/") && request.method === "DELETE") {
+      if (!isAuthed(request)) return new Response("Unauthorized",{status:401});
+      const id = path.split("/api/orders/")[1];
+      await saveOrders(env, (await getOrders(env)).filter(o=>o.id!==id));
+      return new Response(JSON.stringify({ok:true}),{headers:{"Content-Type":"application/json"}});
     }
 
-    // --- API: config ---
+    // API config PUT
     if (path === "/api/config" && request.method === "PUT") {
-      if (!isAuthed(request)) return new Response("Unauthorized", { status: 401 });
-      const body = await request.json();
-      await saveConfig(env, body);
-      return new Response(JSON.stringify({ ok: true }), { headers: { "Content-Type": "application/json" } });
+      if (!isAuthed(request)) return new Response("Unauthorized",{status:401});
+      await saveConfig(env, await request.json());
+      return new Response(JSON.stringify({ok:true}),{headers:{"Content-Type":"application/json"}});
     }
 
-    // --- Admin login ---
-    if (path === ADMIN_PATH + "/login" && request.method === "POST") {
-      const formData = await request.formData();
-      const password = formData.get("password");
-      if (password === ADMIN_PASSWORD) {
-        return new Response(null, {
-          status: 302,
-          headers: {
-            "Location": ADMIN_PATH,
-            "Set-Cookie": "admin_session=valid; Path=/; HttpOnly; Max-Age=86400",
-          },
-        });
+    // Admin login
+    if (path === ADMIN_PATH+"/login" && request.method === "POST") {
+      const fd = await request.formData();
+      if (fd.get("password") === ADMIN_PASSWORD) {
+        return new Response(null,{status:302,headers:{"Location":ADMIN_PATH,"Set-Cookie":"admin_session=valid; Path=/; HttpOnly; Max-Age=86400"}});
       }
-      return new Response(renderAdminLogin(true), { headers: { "Content-Type": "text/html;charset=UTF-8" } });
+      return new Response(html("Kirish",`<div class="admin-login"><h2>Kirish</h2><form method="POST" action="${ADMIN_PATH}/login"><div class="form-group"><input type="password" name="password" placeholder="Parol"/></div><button type="submit" class="btn-submit">Kirish</button><p style="color:var(--danger);margin-top:10px">Parol noto'g'ri</p></form></div>`),{headers:{"Content-Type":"text/html;charset=UTF-8"}});
     }
 
-    // --- Admin panel ---
+    // Admin panel
     if (path === ADMIN_PATH) {
       if (!isAuthed(request)) {
-        return new Response(renderAdminLogin(false), { headers: { "Content-Type": "text/html;charset=UTF-8" } });
+        return new Response(html("Kirish",`<div class="admin-login"><h2 style="font-family:Georgia,serif;color:var(--green);margin-bottom:14px">Admin kirish</h2><form method="POST" action="${ADMIN_PATH}/login"><div class="form-group"><input type="password" name="password" placeholder="Parol"/></div><button type="submit" class="btn-submit">Kirish</button></form></div>`),{headers:{"Content-Type":"text/html;charset=UTF-8"}});
       }
-      return new Response(await renderAdminPanel(env), { headers: { "Content-Type": "text/html;charset=UTF-8" } });
+      return new Response(await renderAdmin(env),{headers:{"Content-Type":"text/html;charset=UTF-8"}});
     }
 
-    // --- Mahsulot sahifasi ---
+    // Product detail
     if (path.startsWith("/product/")) {
       const id = path.split("/product/")[1];
-      return new Response(await renderProductDetail(env, id), { headers: { "Content-Type": "text/html;charset=UTF-8" } });
+      return new Response(await renderDetail(env,id),{headers:{"Content-Type":"text/html;charset=UTF-8"}});
     }
 
-    // --- Bosh sahifa ---
-    if (path === "/" || path === "") {
-      return new Response(await renderHome(env), { headers: { "Content-Type": "text/html;charset=UTF-8" } });
+    // Home
+    if (path==="/"||path==="") {
+      const q = url.searchParams.get("q")||"";
+      const cat = url.searchParams.get("cat")||"";
+      return new Response(await renderHome(env,q,cat),{headers:{"Content-Type":"text/html;charset=UTF-8"}});
     }
 
-    return new Response("Sahifa topilmadi", { status: 404 });
-  },
+    return new Response("Sahifa topilmadi",{status:404});
+  }
 };
