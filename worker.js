@@ -166,7 +166,7 @@ async function renderHome(env) {
   const config = await getConfig(env);
 
   const cards = products.length === 0
-    ? `<div class="empty-state">Hozircha mahsulot yo'q.</div>`
+    ? `<div class="empty-state">Hozircha mahsulot yoq.</div>`
     : products.map((p) => {
         const cover = (p.images && p.images[0]) || "";
         let badge = "";
@@ -209,7 +209,7 @@ async function renderHome(env) {
     <div class="modal">
       <h3 class="modal-title">🛒 Savat</h3>
       <div id="cartItemsList"></div>
-      <div id="cartEmptyMsg" style="text-align:center;padding:30px;color:#5a6b61;display:none">Savat bo'sh</div>
+      <div id="cartEmptyMsg" style="text-align:center;padding:30px;color:#5a6b61;display:none">Savat bosh</div>
       <div id="cartFooter" style="display:none">
         <div class="cart-total-box">
           <div style="display:flex;justify-content:space-between;font-weight:700;font-size:1.05rem;color:#0f3d2e">
@@ -356,7 +356,7 @@ async function renderProductDetail(env, id) {
             <p style="color:var(--ink-soft); margin-bottom:16px;">Buyurtmangiz qabul qilindi! Endi to'lov chekining screenshotini Telegram orqali yuboring — biz tekshirib, mahsulotni jo'natamiz.</p>
             <a href="https://t.me/shokhjahon_primus" target="_blank" class="btn-submit" style="display:block; text-align:center; margin-bottom:10px; text-decoration:none;">📸 To'lov screenshotini yuborish</a>
             <button type="button" class="btn-cancel" onclick="window.location.href='/'">Bosh sahifaga qaytish</button>
-            <a href="/my-orders" style="display:block;text-align:center;margin-top:8px;color:var(--ink-soft);font-size:0.88rem">📦 Buyurtmalarimni ko'rish</a>
+            <a href="/my-orders" style="display:block;text-align:center;margin-top:8px;color:var(--ink-soft);font-size:0.88rem">📦 Buyurtmalarimni korish</a>
           </div>
         </div>
       </div>
@@ -365,7 +365,7 @@ async function renderProductDetail(env, id) {
     <script>
       const DISTRICTS = {
         "Toshkent shahri": ["Bektemir","Chilonzor","Hamza","Mirobod","Mirzo Ulug'bek","Sergeli","Shayxontohur","Olmazar","Uchtepa","Yakkasaroy","Yunusobod","Yangihayot"],
-        "Toshkent viloyati": ["Angren","Bekobod","Bo'stonliq","Bo'ka","Chinoz","Qibray","Oqqo'rg'on","Ohangaron","Parkent","Piskent","Quyi Chirchiq","O'rta Chirchiq","Yuqori Chirchiq","Zangiota","Yangiyo'l"],
+        "Toshkent viloyati": ["Angren","Bekobod","Bo'stonliq","Bo'ka","Chinoz","Qibray","Oqqo'rg'on","Ohangaron","Parkent","Piskent","Quyi Chirchiq","O'rta Chirchiq","Yuqori Chirchiq","Zangiota","Yangiyol"],
         "Samarqand viloyati": ["Samarqand shahri","Bulung'ur","Ishtixon","Jomboy","Kattaqo'rg'on","Narpay","Nurobod","Oqdaryo","Pastdarg'om","Payariq","Po'latov","Toyloq","Urgut"],
         "Buxoro viloyati": ["Buxoro shahri","Buxoro tumani","G'ijduvon","Jondor","Kogon","Olot","Peshku","Qorako'l","Qorovulbozor","Romitan","Shofirkon","Vobkent"],
         "Namangan viloyati": ["Namangan shahri","Chortoq","Chust","Kosonsoy","Mingbuloq","Namangan tumani","Norin","Pop","To'raqo'rg'on","Uychi","Yangiqo'rg'on"],
@@ -467,6 +467,57 @@ async function renderProductDetail(env, id) {
           alert('Xatolik yuz berdi, qaytadan urinib ko\\'ring');
         }
       });
+
+      // SAVAT FUNKSIYALARI
+      let cart = JSON.parse(localStorage.getItem('primus_cart')||'[]');
+      function saveCart(){ localStorage.setItem('primus_cart', JSON.stringify(cart)); updateCartBadge(); }
+      function updateCartBadge(){
+        const total = cart.reduce((s,i)=>s+i.qty,0);
+        const badge = document.getElementById('cartBadge');
+        if(badge){ badge.textContent=total; badge.style.display=total>0?'inline-flex':'none'; }
+      }
+      function addToCart(id, name, price, image){
+        const existing = cart.find(i=>i.id===id);
+        if(existing){ existing.qty++; } else { cart.push({id,name,price:Number(price),image:image||'',qty:1}); }
+        saveCart();
+        alert(name + " savatga qoshildi!");
+      }
+      function openCart(){ renderCartItems(); document.getElementById('cartModal').classList.add('open'); }
+      function renderCartItems(){
+        const list = document.getElementById('cartItemsList');
+        const empty = document.getElementById('cartEmptyMsg');
+        const footer = document.getElementById('cartFooter');
+        if(!list) return;
+        if(cart.length===0){ list.innerHTML=''; empty.style.display='block'; footer.style.display='none'; return; }
+        empty.style.display='none'; footer.style.display='block';
+        let total=0;
+        list.innerHTML=cart.map((item,i)=>{
+          total+=item.price*item.qty;
+          return '<div style="display:flex;gap:10px;padding:10px 0;border-bottom:1px solid #e3dcc9;align-items:center">'+
+            '<img src="'+item.image+'" style="width:50px;height:50px;object-fit:cover;border-radius:8px" onerror="this.style.display=\'none\'"/>'+
+            '<div style="flex:1"><div style="font-weight:600;font-size:0.88rem">'+item.name+'</div>'+
+            '<div style="color:#1a5440;font-weight:700">'+(item.price*item.qty).toLocaleString('ru-RU')+' som</div></div>'+
+            '<div style="display:flex;align-items:center;gap:6px">'+
+            '<button onclick="changeCartQty('+i+',-1)" style="width:28px;height:28px;border-radius:50%;background:#e3dcc9;border:none;font-weight:700;cursor:pointer">-</button>'+
+            '<span style="font-weight:700">'+item.qty+'</span>'+
+            '<button onclick="changeCartQty('+i+',1)" style="width:28px;height:28px;border-radius:50%;background:#e3dcc9;border:none;font-weight:700;cursor:pointer">+</button>'+
+            '</div>'+
+            '<button onclick="removeFromCart('+i+')" style="background:none;border:none;color:#c1432e;font-size:1.2rem;cursor:pointer">x</button>'+
+            '</div>';
+        }).join('');
+        const ts=document.getElementById('cartTotalSum');
+        if(ts) ts.textContent=total.toLocaleString('ru-RU')+' som';
+      }
+      function changeCartQty(idx,delta){ cart[idx].qty=Math.max(1,cart[idx].qty+delta); saveCart(); renderCartItems(); }
+      function removeFromCart(idx){ cart.splice(idx,1); saveCart(); renderCartItems(); }
+      function openOrderFromCart(){
+        if(cart.length===0) return;
+        document.getElementById('cartModal').classList.remove('open');
+        currentProductId=cart[0].id; openModal(currentProductId);
+      }
+      document.getElementById('cartModal').addEventListener('click',function(e){ if(e.target===this) this.classList.remove('open'); });
+      updateCartBadge();
+
     </script>
   `);
 }
@@ -491,7 +542,7 @@ async function renderAdminPanel(env) {
   const config = await getConfig(env);
 
   const productRows = products.length === 0
-    ? `<div class="empty-admin">Hozircha mahsulot qo'shilmagan</div>`
+    ? `<div class="empty-admin">Hozircha mahsulot qoshilmagan</div>`
     : products.map((p) => `
       <div class="admin-product-row">
         <img src="${esc((p.images && p.images[0]) || '')}" alt="" />
@@ -505,7 +556,7 @@ async function renderAdminPanel(env) {
     `).join("");
 
   const orderRows = orders.length === 0
-    ? `<div class="empty-admin">Hozircha buyurtma yo'q</div>`
+    ? `<div class="empty-admin">Hozircha buyurtma yoq</div>`
     : orders.map((o) => `
       <div class="order-card">
         <div style="display:flex; justify-content:space-between; margin-bottom:8px;">
@@ -521,7 +572,7 @@ async function renderAdminPanel(env) {
         <div style="font-size:0.75rem; color:var(--ink-soft); margin-top:6px;">${new Date(o.date).toLocaleString("uz-UZ")}</div>
         ${o.status !== 'bajarildi' ? `<button class="icon-btn" style="margin-top:8px;" onclick="changeStatus('${o.id}','bajarildi')">✓ Bajarildi</button>` : ''}
             \${o.status==='yangi'?\`<button class="icon-btn" style="color:#1d4ed8" onclick="changeStatus('\${o.id}','jarayonda')">⚙️ Jarayonda</button>\`:''} 
-            \${o.status==='jarayonda'?\`<button class="icon-btn" style="color:#c2410c" onclick="changeStatus('\${o.id}','yolda')">🚚 Yo'lda</button>\`:''} 
+            \${o.status==='jarayonda'?\`<button class="icon-btn" style="color:#c2410c" onclick="changeStatus('\${o.id}','yolda')">🚚 Yolda</button>\`:''} 
             \${o.status==='yolda'?\`<button class="icon-btn" style="color:#065f46" onclick="changeStatus('\${o.id}','yetib_keldi')">✅ Yetib keldi</button>\`:''}"
           }
       </div>
@@ -543,18 +594,18 @@ async function renderAdminPanel(env) {
 
       <div id="productsPanel">
         <div class="admin-section">
-          <h2 id="formTitle">Yangi mahsulot qo'shish</h2>
+          <h2 id="formTitle">Yangi mahsulot qoshish</h2>
           <form id="productForm">
             <input type="hidden" id="editId" value="" />
             <div class="form-group"><label>Mahsulot nomi</label><input type="text" id="prodName" required /></div>
             <div class="form-group"><label>Narxi (so'm)</label><input type="number" id="prodPrice" required /></div>
             <div class="form-group"><label>Tavsif</label><textarea id="prodDesc" rows="2"></textarea></div>
             <div class="form-group">
-              <label>Rasm manzillari (URL) - bir nechta qo'shish mumkin</label>
+              <label>Rasm manzillari (URL) - bir nechta qoshish mumkin</label>
               <div id="imageList">
                 <div class="imagelist-row"><input type="text" class="imgInput" placeholder="https://..." /></div>
               </div>
-              <button type="button" class="icon-btn" onclick="addImageField()">+ Yana rasm qo'shish</button>
+              <button type="button" class="icon-btn" onclick="addImageField()">+ Yana rasm qoshish</button>
             </div>
             <div class="form-group"><label>Ranglar (vergul bilan ajrating, masalan: Qora, Oq, Ko'k)</label><input type="text" id="prodColors" placeholder="Qora, Oq, Ko'k" /></div>
             <div class="form-group"><label>O'lchamlar (vergul bilan ajrating, masalan: S, M, L, XL)</label><input type="text" id="prodSizes" placeholder="S, M, L, XL" /></div>
@@ -566,7 +617,7 @@ async function renderAdminPanel(env) {
                 <option value="soon">Tez kunda</option>
               </select>
             </div>
-            <button type="submit" class="btn-submit" id="submitBtn">Mahsulot qo'shish</button>
+            <button type="submit" class="btn-submit" id="submitBtn">Mahsulot qoshish</button>
             <button type="button" class="icon-btn" id="cancelEditBtn" style="display:none; margin-top:8px; width:100%;" onclick="cancelEdit()">Tahrirlashni bekor qilish</button>
           </form>
         </div>
@@ -669,7 +720,7 @@ async function renderAdminPanel(env) {
         document.getElementById('productForm').reset();
         document.getElementById('editId').value = '';
         setImageValues([]);
-        document.getElementById('formTitle').textContent = "Yangi mahsulot qo'shish";
+        document.getElementById('formTitle').textContent = "Yangi mahsulot qoshish";
         document.getElementById('submitBtn').textContent = 'Mahsulot qo\\'shish';
         document.getElementById('cancelEditBtn').style.display = 'none';
       }
@@ -757,7 +808,7 @@ async function renderMyOrders(env, phone) {
     </header>
     <div style="max-width:400px;margin:60px auto;padding:20px;background:#fff;border-radius:14px;box-shadow:0 2px 8px rgba(0,0,0,0.08);text-align:center">
       <h2 style="font-family:Georgia,serif;color:#0f3d2e;margin-bottom:16px">Buyurtmalarim</h2>
-      <p style="color:#5a6b61;margin-bottom:20px;font-size:0.9rem">Buyurtmalaringizni ko'rish uchun telefon raqamingizni kiriting</p>
+      <p style="color:#5a6b61;margin-bottom:20px;font-size:0.9rem">Buyurtmalaringizni korish uchun telefon raqamingizni kiriting</p>
       <form method="GET" action="/my-orders">
         <div style="margin-bottom:12px">
           <input type="tel" name="phone" required placeholder="+998 90 123 45 67" 
@@ -772,11 +823,11 @@ async function renderMyOrders(env, phone) {
   const myOrders = orders.filter(o => o.customerPhone && o.customerPhone.replace(/\s/g,'') === phone.replace(/\s/g,''));
   
   const statusLabel = {
-    'yangi': 'Yangi',
-    'jarayonda': '⚙️ Jarayonda',
-    'yolda': '🚚 Yo'lda',
-    'yetib_keldi': '✅ Yetib keldi',
-    'bajarildi': '✅ Bajarildi'
+    "yangi": "Yangi",
+    "jarayonda": "Jarayonda",
+    "yolda": "🚚 Yolda",
+    "yetib_keldi": "Yetib keldi",
+    "bajarildi": "Bajarildi"
   };
   
   const statusClass = {
@@ -788,7 +839,7 @@ async function renderMyOrders(env, phone) {
   };
 
   const orderCards = myOrders.length === 0 
-    ? '<div style="text-align:center;padding:40px;color:#5a6b61">Hozircha buyurtma yo'q</div>'
+    ? '<div style="text-align:center;padding:40px;color:#5a6b61">Hozircha buyurtma yoq</div>'
     : myOrders.map(o => {
         const items = (o.items||[{name:o.productName||'Mahsulot',qty:1,price:o.price||0}])
           .map(i => `<div style="font-size:0.88rem">${esc(i.name)} x${i.qty} — ${(i.price*i.qty).toLocaleString('ru-RU')} so'm</div>`)
